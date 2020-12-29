@@ -1,10 +1,10 @@
-import { vertices } from "./data";
+import { vertexShader, vertices } from "./data";
 
 console.info("lol");
 
 const canvas = document.getElementById("main_canvas") as HTMLCanvasElement;
 
-const gl = canvas.getContext("webgl2");
+const gl = canvas.getContext("webgl");
 
 (window as any).gl = gl;
 
@@ -35,7 +35,27 @@ console.info(`Size`, gl.getBufferParameter(gl.ARRAY_BUFFER, gl.BUFFER_USAGE));
 
 console.info("vertexes", vertices);
 
+/*
+// Example of how to read data from buffer in webgl2
 const myBuf = new Float32Array(10);
 gl.getBufferSubData(gl.ARRAY_BUFFER, 0, myBuf);
 checkErr();
 console.info(myBuf);
+*/
+
+const shader1 = gl.createShader(gl.VERTEX_SHADER);
+if (!shader1) {
+  throw new Error("No shader");
+}
+
+gl.shaderSource(shader1, vertexShader);
+checkErr();
+
+gl.compileShader(shader1);
+checkErr();
+
+if (!gl.getShaderParameter(shader1, gl.COMPILE_STATUS)) {
+  var info = gl.getShaderInfoLog(shader1);
+  throw new Error("Could not compile WebGL program. \n\n" + info);
+}
+//gl.createProgram();
