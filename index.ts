@@ -84,13 +84,38 @@ if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
   throw new Error("Fatal error: Failed to link program: " + error);
 }
 
+console.info(`Program InfoLog="${gl.getProgramInfoLog(program)}"`);
+console.info(`shaders=${gl.getProgramParameter(program, gl.ATTACHED_SHADERS)}`);
 console.info(
-  `Program InfoLog="${gl.getProgramInfoLog(program)}"` +
-    ` ` +
-    `attributes=${gl.getProgramParameter(program, gl.ACTIVE_ATTRIBUTES)} ` +
-    `uniforms=${gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS)} ` +
-    `shaders=${gl.getProgramParameter(program, gl.ATTACHED_SHADERS)}`
+  `attributes=${gl.getProgramParameter(program, gl.ACTIVE_ATTRIBUTES)} `
 );
+for (
+  let i = 0;
+  i < gl.getProgramParameter(program, gl.ACTIVE_ATTRIBUTES);
+  i++
+) {
+  const attributeInfo = gl.getActiveAttrib(program, 0);
+  if (!attributeInfo) {
+    console.warn(`  Atttribute id=${i} no info!`);
+  } else {
+    console.info(
+      `  Atribute id=${i} name=${attributeInfo.name} size=${attributeInfo.size} type=${attributeInfo.type}`
+    );
+  }
+}
+console.info(
+  `uniforms=${gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS)} `
+);
+for (let i = 0; i < gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS); i++) {
+  const attributeInfo = gl.getActiveUniform(program, 0);
+  if (!attributeInfo) {
+    console.warn(`  Uniform id=${i} no info!`);
+  } else {
+    console.info(
+      `  Uniform id=${i} name=${attributeInfo.name} size=${attributeInfo.size} type=${attributeInfo.type}`
+    );
+  }
+}
 
 // Validation is optional and can be used for debugging
 gl.validateProgram(program);
