@@ -84,6 +84,20 @@ if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
   throw new Error("Fatal error: Failed to link program: " + error);
 }
 
+console.info(
+  `Program InfoLog="${gl.getProgramInfoLog(program)}"` +
+    ` ` +
+    `attributes=${gl.getProgramParameter(program, gl.ACTIVE_ATTRIBUTES)} ` +
+    `uniforms=${gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS)} ` +
+    `shaders=${gl.getProgramParameter(program, gl.ATTACHED_SHADERS)}`
+);
+
+// Validation is optional and can be used for debugging
+gl.validateProgram(program);
+if (!gl.getProgramParameter(program, gl.VALIDATE_STATUS)) {
+  console.warn(`Program validate fails: ${gl.getProgramInfoLog(program)}`);
+}
+
 // Explicit bind (TODO: Should it be before linkage?)
 // const a_Vertex_location = 0;
 // gl.bindAttribLocation(program, 0, "a_Vertex");
