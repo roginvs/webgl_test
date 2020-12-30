@@ -1,4 +1,9 @@
-import { fragmenShaderSource, vertexShaderSource, vertexes } from "./data";
+import {
+  fragmenShaderSource,
+  vertexShaderSource,
+  vertexes,
+  transformMatrix,
+} from "./data";
 
 console.info("lol");
 
@@ -128,8 +133,10 @@ if (!gl.getProgramParameter(program, gl.VALIDATE_STATUS)) {
 // gl.bindAttribLocation(program, 0, "a_Vertex");
 
 const a_Vertex_location = gl.getAttribLocation(program, "a_Vertex");
+const u_Transform_location = gl.getUniformLocation(program, "u_Transform");
 
 gl.useProgram(program);
+checkErr();
 
 gl.clearColor(0, 0, 0, 1);
 
@@ -146,11 +153,12 @@ gl.vertexAttribPointer(
   0,
   0
 );
-
 gl.enableVertexAttribArray(a_Vertex_location);
 
-gl.drawArrays(gl.TRIANGLES, 0, 3);
+gl.uniformMatrix4fv(u_Transform_location, false, transformMatrix);
 
+gl.drawArrays(gl.TRIANGLES, 0, 6);
+checkErr();
 /*
 
 const u_Color_location = gl.getUniformLocation(program, "u_Color");

@@ -59,6 +59,25 @@ export const vertexes = new Float32Array([
   0,
 ]);
 
+export const transformMatrix = new Float32Array([
+  1,
+  0,
+  0,
+  0,
+  0,
+  1,
+  0,
+  0,
+  0,
+  0,
+  1,
+  0,
+  0,
+  0,
+  0,
+  1,
+]);
+
 export const vertexShaderSource = `
 
 precision mediump float;
