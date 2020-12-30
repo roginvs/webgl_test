@@ -1,4 +1,4 @@
-import { fragmenShaderSource, vertexShaderSource, vertices } from "./data";
+import { fragmenShaderSource, vertexShaderSource, vertexes } from "./data";
 
 console.info("lol");
 
@@ -28,12 +28,10 @@ if (!buffer_id) {
 gl.bindBuffer(gl.ARRAY_BUFFER, buffer_id);
 checkErr();
 
-gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+gl.bufferData(gl.ARRAY_BUFFER, vertexes, gl.STATIC_DRAW);
 checkErr();
 
-console.info(`Size`, gl.getBufferParameter(gl.ARRAY_BUFFER, gl.BUFFER_USAGE));
-
-console.info("vertexes", vertices);
+// console.info(`Size`, gl.getBufferParameter(gl.ARRAY_BUFFER, gl.BUFFER_USAGE));
 
 /*
 // Example of how to read data from buffer in webgl2
@@ -86,11 +84,38 @@ if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
   throw new Error("Fatal error: Failed to link program: " + error);
 }
 
+// Explicit bind (TODO: Should it be before linkage?)
+// const a_Vertex_location = 0;
+// gl.bindAttribLocation(program, 0, "a_Vertex");
+
+const a_Vertex_location = gl.getAttribLocation(program, "a_Vertex");
+
 gl.useProgram(program);
+
+gl.clearColor(0, 0, 0, 1);
+
+// rendering
+
+gl.clear(gl.COLOR_BUFFER_BIT);
+
+gl.vertexAttribPointer(
+  a_Vertex_location,
+  3 /* Values per vertex */,
+  gl.FLOAT,
+  false,
+  0,
+  0
+);
+
+gl.enableVertexAttribArray(a_Vertex_location);
+
+gl.drawArrays(gl.TRIANGLES, 0, 3);
+
+/*
 
 const u_Color_location = gl.getUniformLocation(program, "u_Color");
 const u_Transform_location = gl.getUniformLocation(program, "u_Transform");
-const a_Vertex_location = gl.getAttribLocation(program, "a_Vertex");
+
 
 const transform = new Float32Array(16);
 transform.fill(0);
@@ -112,3 +137,4 @@ gl.enableVertexAttribArray(a_Vertex_location);
 
 // Draw all of the triangles
 gl.drawArrays(gl.TRIANGLES, 0, 12);
+*/
