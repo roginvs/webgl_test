@@ -107,12 +107,12 @@ console.info(
   `uniforms=${gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS)} `
 );
 for (let i = 0; i < gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS); i++) {
-  const attributeInfo = gl.getActiveUniform(program, 0);
-  if (!attributeInfo) {
+  const uniformInfo = gl.getActiveUniform(program, 0);
+  if (!uniformInfo) {
     console.warn(`  Uniform id=${i} no info!`);
   } else {
     console.info(
-      `  Uniform id=${i} name=${attributeInfo.name} size=${attributeInfo.size} type=${attributeInfo.type}`
+      `  Uniform id=${i} name=${uniformInfo.name} size=${uniformInfo.size} type=${uniformInfo.type}`
     );
   }
 }
