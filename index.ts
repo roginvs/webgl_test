@@ -159,6 +159,15 @@ gl.uniformMatrix4fv(u_Transform_location, false, transformMatrix);
 
 gl.drawArrays(gl.TRIANGLES, 0, 6);
 checkErr();
+
+setTimeout(() => {
+  console.info("New render");
+  transformMatrix[0] = 1.5;
+  transformMatrix[5] = 0.9;
+  gl.uniformMatrix4fv(u_Transform_location, false, transformMatrix);
+
+  gl.drawArrays(gl.TRIANGLES, 0, 6);
+}, 1000);
 /*
 
 const u_Color_location = gl.getUniformLocation(program, "u_Color");
