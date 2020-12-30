@@ -96,7 +96,8 @@ gl.clearColor(0, 0, 0, 1);
 
 // rendering
 
-gl.clear(gl.COLOR_BUFFER_BIT);
+// No need to clear - it is done implicitly by webgl
+//gl.clear(gl.COLOR_BUFFER_BIT);
 
 gl.vertexAttribPointer(
   a_Vertex_location,
