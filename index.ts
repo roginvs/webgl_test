@@ -130,7 +130,8 @@ if (!gl.getProgramParameter(program, gl.VALIDATE_STATUS)) {
 // const a_Vertex_location = 0;
 // gl.bindAttribLocation(program, 0, "a_Vertex");
 
-const a_Vertex_location = gl.getAttribLocation(program, "a_Vertex");
+const a_Vertex_location = gl.getAttribLocation(program, "a_Vertex_loc");
+const a_Vertex_color = gl.getAttribLocation(program, "a_Vertex_color");
 const u_Transform_location = gl.getUniformLocation(program, "u_Transform");
 
 gl.useProgram(program);
@@ -153,6 +154,16 @@ gl.vertexAttribPointer(
   0 /* offset */
 );
 gl.enableVertexAttribArray(a_Vertex_location);
+
+gl.vertexAttribPointer(
+  a_Vertex_color,
+  3 /* Values per vertex */,
+  gl.FLOAT,
+  false,
+  6 * FLOAT_SIZE /* Stride side is full size in bytes */,
+  3 * FLOAT_SIZE /* offset */
+);
+gl.enableVertexAttribArray(a_Vertex_color);
 
 gl.uniformMatrix4fv(u_Transform_location, false, transformMatrix);
 
