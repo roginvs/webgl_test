@@ -163,6 +163,9 @@ gl.vertexAttribPointer(
   6 * FLOAT_SIZE /* Stride side is full size in bytes */,
   3 * FLOAT_SIZE /* offset */
 );
+// gl.vertexAttrib4f(a_Vertex_color, 0.9, 0, 0.4, 1);
+// Attribute can be set via vertexAttribPointer or vertexAttrib4f
+// Enabling array will disable const value
 gl.enableVertexAttribArray(a_Vertex_color);
 
 gl.uniformMatrix4fv(u_Transform_location, false, transformMatrix);
