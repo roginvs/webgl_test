@@ -79,6 +79,7 @@ export const transformMatrix = new Float32Array([
 ]);
 
 export const vertexShaderSource = `
+#version 100
 
 precision mediump float;
 
@@ -94,6 +95,7 @@ void main() {
 `;
 
 export const fragmenShaderSource = `
+#version 100
 
 precision mediump float;
 
