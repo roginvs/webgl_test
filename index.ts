@@ -174,7 +174,7 @@ gl.enableVertexAttribArray(a_Vertex_color);
 
 gl.uniformMatrix4fv(u_Transform_location, false, transformMatrix);
 
-gl.drawArrays(gl.TRIANGLES, 0, 9);
+gl.drawArrays(gl.TRIANGLES, 0, 12);
 checkErr();
 
 setTimeout(() => {
@@ -183,7 +183,7 @@ setTimeout(() => {
   transformMatrix[5] = 0.9;
   gl.uniformMatrix4fv(u_Transform_location, false, transformMatrix);
 
-  gl.drawArrays(gl.TRIANGLES, 0, 9);
+  gl.drawArrays(gl.TRIANGLES, 0, 12);
 }, 1000);
 /*
 
