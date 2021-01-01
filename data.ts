@@ -39,14 +39,15 @@ export const oldVerttexes = new Float32Array([
 
 export const vertexes = new Float32Array(
   `
-0       0.5     0  
--0.5   -0.5     0  
-0.5    -0.5     0 
+0       0.5     0     1 0 0 
+-0.5   -0.5     0     0 1 0 
+0.5    -0.5     0     0 0 1 
 
-0       1       0 
-0.5     1       0 
-0.5     0.5     0 
+0       1       0     1 0 0 
+0.5     1       0     0 1 0 
+0.5     0.5     0     0 0 1 
 `
+    .replace(/\r|\n/g, " ")
     .split(/ +/)
     .filter((x) => x)
     .map((x) => parseFloat(x))

@@ -138,6 +138,7 @@ checkErr();
 
 gl.clearColor(0, 0, 0, 1);
 
+const FLOAT_SIZE = 4;
 // rendering
 
 // No need to clear - it is done implicitly by webgl
@@ -148,8 +149,8 @@ gl.vertexAttribPointer(
   3 /* Values per vertex */,
   gl.FLOAT,
   false,
-  0,
-  0
+  6 * FLOAT_SIZE /* Stride side is full size in bytes */,
+  0 /* offset */
 );
 gl.enableVertexAttribArray(a_Vertex_location);
 
