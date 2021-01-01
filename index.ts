@@ -1,5 +1,6 @@
+import { assert } from "console";
 import { readFileSync } from "fs";
-import { vertexes, transformMatrix } from "./data";
+import { vertexes, transformMatrix, cubeVertexes, cubeIndexes } from "./data";
 
 console.info("lol");
 
@@ -21,12 +22,12 @@ function checkErr() {
   }
 }
 
-const buffer_id = gl.createBuffer();
-if (!buffer_id) {
+const vertexes_buffer_id = gl.createBuffer();
+if (!vertexes_buffer_id) {
   throw new Error("No buffer id");
 }
 
-gl.bindBuffer(gl.ARRAY_BUFFER, buffer_id);
+gl.bindBuffer(gl.ARRAY_BUFFER, vertexes_buffer_id);
 checkErr();
 
 gl.bufferData(gl.ARRAY_BUFFER, vertexes, gl.STATIC_DRAW);
@@ -140,52 +141,95 @@ checkErr();
 gl.clearColor(0, 0, 0, 1);
 
 const FLOAT_SIZE = 4;
-// rendering
+//
+//
+// ==== providing cube
+const cubeVertexesBufId = gl.createBuffer();
+if (!cubeVertexesBufId) {
+  throw new Error("Failed to create cubeVertexesBuf");
+}
+gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexesBufId);
+gl.bufferData(gl.ARRAY_BUFFER, cubeVertexes, gl.STATIC_DRAW);
 
-// No need to clear - it is done implicitly by webgl
-//gl.clear(gl.COLOR_BUFFER_BIT);
+const cubeVertexesIndexesBufId = gl.createBuffer();
+if (!cubeVertexesIndexesBufId) {
+  throw new Error("Failed to create cubeVertexesBuf");
+}
+gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cubeVertexesIndexesBufId);
+gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, cubeIndexes, gl.STATIC_DRAW);
+gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
+//
+//
+//
+/// ============  rendering ================
+const render = (coef = 1) => {
+  // No need to clear - it is done implicitly by webgl
+  //gl.clear(gl.COLOR_BUFFER_BIT);
 
-// WebGL always uses GPU memory, so last parameter is always an offset
-// Which means we must bind an array first
-// If OpenGL function is called and no array is bound, then it treats "offset"
-//   as actual pointer inside client memory. TODO: Why book example binds only for enableVertexAttribArray?
-// We can unbind an array after this function call - WebGL just remembers where pointer is
-gl.vertexAttribPointer(
-  a_Vertex_location,
-  3 /* Values per vertex */,
-  gl.FLOAT,
-  false,
-  6 * FLOAT_SIZE /* Stride side is full size in bytes */,
-  0 /* offset */
-);
-gl.enableVertexAttribArray(a_Vertex_location);
-
-gl.vertexAttribPointer(
-  a_Vertex_color,
-  3 /* Values per vertex */,
-  gl.FLOAT,
-  false,
-  6 * FLOAT_SIZE /* Stride side is full size in bytes */,
-  3 * FLOAT_SIZE /* offset */
-);
-// gl.vertexAttrib4f(a_Vertex_color, 0.9, 0, 0.4, 1);
-// Attribute can be set via vertexAttribPointer or vertexAttrib4f
-// Enabling array will disable const value
-gl.enableVertexAttribArray(a_Vertex_color);
-
-gl.uniformMatrix4fv(u_Transform_location, false, transformMatrix);
-
-gl.drawArrays(gl.TRIANGLES, 0, 9);
-gl.drawArrays(gl.LINE_LOOP, 9, 3);
-checkErr();
-
-setTimeout(() => {
-  console.info("New render");
-  transformMatrix[0] = 1.5;
-  transformMatrix[5] = 0.9;
+  transformMatrix[0] = 1 * coef;
+  transformMatrix[5] = 1 / coef;
   gl.uniformMatrix4fv(u_Transform_location, false, transformMatrix);
 
-  gl.drawArrays(gl.TRIANGLES, 0, 12);
+  // WebGL always uses GPU memory, so last parameter is always an offset
+  // Which means we must bind an array first
+  // If OpenGL function is called and no array is bound, then it treats "offset"
+  //   as actual pointer inside client memory. TODO: Why book example binds only for enableVertexAttribArray?
+  // We can unbind an array after this function call - WebGL just remembers where pointer is
+  gl.bindBuffer(gl.ARRAY_BUFFER, vertexes_buffer_id);
+  gl.vertexAttribPointer(
+    a_Vertex_location,
+    3 /* Values per vertex */,
+    gl.FLOAT,
+    false,
+    6 * FLOAT_SIZE /* Stride side is full size in bytes */,
+    0 /* offset */
+  );
+  gl.enableVertexAttribArray(a_Vertex_location);
+
+  gl.vertexAttribPointer(
+    a_Vertex_color,
+    3 /* Values per vertex */,
+    gl.FLOAT,
+    false,
+    6 * FLOAT_SIZE /* Stride side is full size in bytes */,
+    3 * FLOAT_SIZE /* offset */
+  );
+  // gl.vertexAttrib4f(a_Vertex_color, 0.9, 0, 0.4, 1);
+  // Attribute can be set via vertexAttribPointer or vertexAttrib4f
+  // Enabling array will disable const value
+  gl.enableVertexAttribArray(a_Vertex_color);
+
+  gl.drawArrays(gl.TRIANGLES, 0, 9);
+
+  gl.lineWidth(2);
+  gl.drawArrays(gl.LINE_LOOP, 9, 3);
+
+  //
+  // cube
+  gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexesBufId);
+
+  gl.vertexAttribPointer(
+    a_Vertex_location,
+    3 /* Values per vertex */,
+    gl.FLOAT,
+    false,
+    3 * FLOAT_SIZE /* Stride side is full size in bytes */,
+    0 /* offset */
+  );
+  gl.enableVertexAttribArray(a_Vertex_location);
+  // Color is same
+  gl.vertexAttrib4f(a_Vertex_color, 0.9, 0, 0.4, 1);
+  gl.disableVertexAttribArray(a_Vertex_color);
+
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cubeVertexesIndexesBufId);
+  gl.drawElements(gl.LINE_STRIP, cubeIndexes.length, gl.UNSIGNED_SHORT, 0);
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
+};
+
+render(1);
+setTimeout(() => {
+  console.info("New render");
+  render(1.2);
 }, 1000);
 /*
 
