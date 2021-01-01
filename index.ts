@@ -145,6 +145,10 @@ const FLOAT_SIZE = 4;
 // No need to clear - it is done implicitly by webgl
 //gl.clear(gl.COLOR_BUFFER_BIT);
 
+// WebGL always uses GPU memory, so last parameter is always an offset
+// Which means we must bind an array first
+// If OpenGL function is called and no array is bound, then it treats "offset"
+//   as actual pointer inside client memory
 gl.vertexAttribPointer(
   a_Vertex_location,
   3 /* Values per vertex */,
