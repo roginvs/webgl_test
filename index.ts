@@ -1,9 +1,5 @@
-import {
-  fragmenShaderSource,
-  vertexShaderSource,
-  vertexes,
-  transformMatrix,
-} from "./data";
+import { readFileSync } from "fs";
+import { vertexes, transformMatrix } from "./data";
 
 console.info("lol");
 
@@ -52,10 +48,12 @@ if (!shader1 || !shader2) {
   throw new Error("No shaders");
 }
 
+const vertexShaderSource = readFileSync("./vertex.shader").toString();
 gl.shaderSource(shader1, vertexShaderSource);
 checkErr();
 
-gl.shaderSource(shader2, fragmenShaderSource);
+const fragment = readFileSync("./fragment.shader").toString();
+gl.shaderSource(shader2, fragment);
 checkErr();
 
 gl.compileShader(shader1);
