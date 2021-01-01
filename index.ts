@@ -148,7 +148,8 @@ const FLOAT_SIZE = 4;
 // WebGL always uses GPU memory, so last parameter is always an offset
 // Which means we must bind an array first
 // If OpenGL function is called and no array is bound, then it treats "offset"
-//   as actual pointer inside client memory
+//   as actual pointer inside client memory. TODO: Why book example binds only for enableVertexAttribArray?
+// We can unbind an array after this function call - WebGL just remembers where pointer is
 gl.vertexAttribPointer(
   a_Vertex_location,
   3 /* Values per vertex */,
@@ -174,7 +175,8 @@ gl.enableVertexAttribArray(a_Vertex_color);
 
 gl.uniformMatrix4fv(u_Transform_location, false, transformMatrix);
 
-gl.drawArrays(gl.TRIANGLES, 0, 12);
+gl.drawArrays(gl.TRIANGLES, 0, 9);
+gl.drawArrays(gl.LINE_LOOP, 9, 3);
 checkErr();
 
 setTimeout(() => {
