@@ -15,4 +15,5 @@ void main() {
   gl_Position = u_Transform * vec4(a_Vertex_loc, 1.0);
 
   v_Vertex_color = a_Vertex_color;
+  //v_Vertex_color.rgb = a_Vertex_color.gbr;
 }
