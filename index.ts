@@ -159,7 +159,7 @@ gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cubeVertexesIndexesBufId);
 gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, cubeIndexes, gl.STATIC_DRAW);
 gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
 
-gl.depthRange(0, 100);
+gl.depthRange(0, 1000);
 //
 //
 //
@@ -208,6 +208,7 @@ const render = (coef = 1) => {
 
   //
   // cube
+  // TODO: Why no depth?
   gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexesBufId);
 
   gl.vertexAttribPointer(
