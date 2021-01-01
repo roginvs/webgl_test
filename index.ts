@@ -159,7 +159,8 @@ gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cubeVertexesIndexesBufId);
 gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, cubeIndexes, gl.STATIC_DRAW);
 gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
 
-gl.depthRange(0, 1000);
+// Probably no need this
+//gl.depthRange(0, 1000);
 
 // Uncomment this to skip clock-wide triangles
 //gl.enable(gl.CULL_FACE);
