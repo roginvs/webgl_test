@@ -1,6 +1,5 @@
 import { assert } from "console";
 import { readFileSync } from "fs";
-import { vertexes } from "./data";
 import * as mat4 from "./mat4";
 import { cube } from "./obj";
 
@@ -23,17 +22,6 @@ function checkErr() {
     throw new Error(`WebGL error=${err}`);
   }
 }
-
-const vertexes_buffer_id = gl.createBuffer();
-if (!vertexes_buffer_id) {
-  throw new Error("No buffer id");
-}
-
-gl.bindBuffer(gl.ARRAY_BUFFER, vertexes_buffer_id);
-checkErr();
-
-gl.bufferData(gl.ARRAY_BUFFER, vertexes, gl.STATIC_DRAW);
-checkErr();
 
 // console.info(`Size`, gl.getBufferParameter(gl.ARRAY_BUFFER, gl.BUFFER_USAGE));
 
@@ -136,7 +124,9 @@ if (!gl.getProgramParameter(program, gl.VALIDATE_STATUS)) {
 const a_Vertex_location = gl.getAttribLocation(program, "a_Vertex_loc");
 const a_Vertex_color = gl.getAttribLocation(program, "a_Vertex_color");
 const a_Vertex_normal = gl.getAttribLocation(program, "a_Vertex_normal");
-const u_Transform_location = gl.getUniformLocation(program, "u_Transform");
+const u_model_location = gl.getUniformLocation(program, "u_model");
+const u_view_location = gl.getUniformLocation(program, "u_view");
+const u_projection_location = gl.getUniformLocation(program, "u_projection");
 
 gl.useProgram(program);
 checkErr();
@@ -175,69 +165,24 @@ gl.enable(gl.DEPTH_TEST);
 //
 /// ============  rendering ================
 
-const rotationMatrix = mat4.create();
-mat4.rotate(rotationMatrix, rotationMatrix, Math.PI / 5, [2, 1, 0]);
-//mat4.fromRotation(rotationMatrix, Math.PI / 5, [2, 1, 0]);
+const cubeTransformMatrix = mat4.create();
+mat4.scale(cubeTransformMatrix, cubeTransformMatrix, [0.2, 0.2, 0.2]);
+//mat4.translate(cubeTransformMatrix, cubeTransformMatrix, [0, 0, -2]);
 
-const scaleMatrix = mat4.create();
-mat4.scale(scaleMatrix, scaleMatrix, [0.2, 0.2, 0.2]);
-
-const translateMatrix = mat4.create();
-mat4.translate(translateMatrix, translateMatrix, [0, 0, -2]);
+const cameraViewMatrix = mat4.create();
+mat4.translate(cameraViewMatrix, cameraViewMatrix, [0, 0, -1]);
+mat4.rotate(cameraViewMatrix, cameraViewMatrix, Math.PI / 5, [1, 1, 0]);
 
 const projectionMatrix = mat4.create();
 mat4.perspective(projectionMatrix, 45, 1, 0.1, 100);
 
-const transformMatrix = mat4.create();
-
 const render = (coef = 1) => {
   console.info("Render");
 
-  // No need to clear - it is done implicitly by webgl
-  //gl.clear(gl.COLOR_BUFFER_BIT);
+  gl.uniformMatrix4fv(u_model_location, false, cubeTransformMatrix);
+  gl.uniformMatrix4fv(u_view_location, false, cameraViewMatrix);
+  gl.uniformMatrix4fv(u_projection_location, false, projectionMatrix);
 
-  //transformMatrix[0] = 1 * coef;
-  //transformMatrix[5] = 1 / coef;
-  mat4.multiply(transformMatrix, projectionMatrix, translateMatrix);
-  mat4.multiply(transformMatrix, transformMatrix, rotationMatrix);
-  mat4.multiply(transformMatrix, transformMatrix, scaleMatrix);
-  gl.uniformMatrix4fv(u_Transform_location, false, transformMatrix);
-
-  // WebGL always uses GPU memory, so last parameter is always an offset
-  // Which means we must bind an array first
-  // If OpenGL function is called and no array is bound, then it treats "offset"
-  //   as actual pointer inside client memory. TODO: Why book example binds only for enableVertexAttribArray?
-  // We can unbind an array after this function call - WebGL just remembers where pointer is
-  gl.bindBuffer(gl.ARRAY_BUFFER, vertexes_buffer_id);
-  gl.vertexAttribPointer(
-    a_Vertex_location,
-    3 /* Values per vertex */,
-    gl.FLOAT,
-    false,
-    6 * FLOAT_SIZE /* Stride side is full size in bytes */,
-    0 /* offset */
-  );
-  gl.enableVertexAttribArray(a_Vertex_location);
-
-  gl.vertexAttribPointer(
-    a_Vertex_color,
-    3 /* Values per vertex */,
-    gl.FLOAT,
-    false,
-    6 * FLOAT_SIZE /* Stride side is full size in bytes */,
-    3 * FLOAT_SIZE /* offset */
-  );
-  // gl.vertexAttrib4f(a_Vertex_color, 0.9, 0, 0.4, 1);
-  // Attribute can be set via vertexAttribPointer or vertexAttrib4f
-  // Enabling array will disable const value
-  gl.enableVertexAttribArray(a_Vertex_color);
-
-  gl.drawArrays(gl.TRIANGLES, 0, 9);
-
-  gl.lineWidth(2);
-  gl.drawArrays(gl.LINE_LOOP, 9, 3);
-
-  // ================
   // cube
   gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexesBufId);
 
@@ -282,13 +227,15 @@ canvas.onmousemove = (e) => {
 
   const dx = e.movementX;
   const dy = e.movementY;
+
+  /*
   if (dx !== 0) {
     mat4.rotate(rotationMatrix, rotationMatrix, dx / 50, [0, 1, 0]);
   }
   if (dy !== 0) {
     mat4.rotate(rotationMatrix, rotationMatrix, dy / 50, [1, 0, 0]);
   }
-
+  */
   render();
 };
 /*
