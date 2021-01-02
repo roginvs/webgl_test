@@ -1,6 +1,7 @@
 import { assert } from "console";
 import { readFileSync } from "fs";
-import { vertexes, transformMatrix, cubeVertexes, cubeIndexes } from "./data";
+import { vertexes, cubeVertexes, cubeIndexes } from "./data";
+import * as mat4 from "./mat4";
 
 console.info("lol");
 
@@ -169,6 +170,9 @@ gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
 //
 //
 /// ============  rendering ================
+
+const transformMatrix = mat4.create();
+
 const render = (coef = 1) => {
   // No need to clear - it is done implicitly by webgl
   //gl.clear(gl.COLOR_BUFFER_BIT);
@@ -237,7 +241,7 @@ const render = (coef = 1) => {
 render(1);
 setTimeout(() => {
   console.info("New render");
-  render(1.2);
+  render(1);
 }, 1000);
 /*
 

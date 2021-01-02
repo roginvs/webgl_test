@@ -44,8 +44,8 @@ export const vertexes = new Float32Array(
 -0.1    -1     0     0 0 1 
 
 0       0       0     1 0 0 
-0.1     1       0     0 1 0 
--0.1     1     0     0 0 1 
+1     0.1       0     0 1 0 
+-1     0.1     0     0 0 1 
 
 0     0       0     1 0 0 
 0.2   0.2       0     0 1 0 
@@ -87,22 +87,3 @@ export const cubeIndexes = new Uint16Array(
     .filter((x) => x)
     .map((x) => parseInt(x))
 );
-
-export const transformMatrix = new Float32Array([
-  1,
-  0,
-  0,
-  0,
-  0,
-  1,
-  0,
-  0,
-  0,
-  0,
-  1,
-  0,
-  0,
-  0,
-  0,
-  1,
-]);
