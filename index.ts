@@ -172,9 +172,9 @@ gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
 /// ============  rendering ================
 
 const rotationMatrix = mat4.create();
+mat4.fromRotation(rotationMatrix, Math.PI / 8, [2, 1, 0]);
 const translateMatrix = mat4.create();
 mat4.translate(translateMatrix, translateMatrix, [0, 0, -2]);
-console.info(translateMatrix);
 const projectionMatrix = mat4.create();
 mat4.perspective(projectionMatrix, 45, 1, 0.1, 100);
 
@@ -187,6 +187,7 @@ const render = (coef = 1) => {
   //transformMatrix[0] = 1 * coef;
   //transformMatrix[5] = 1 / coef;
   mat4.multiply(transformMatrix, projectionMatrix, translateMatrix);
+  mat4.multiply(transformMatrix, transformMatrix, rotationMatrix);
   gl.uniformMatrix4fv(u_Transform_location, false, transformMatrix);
 
   // WebGL always uses GPU memory, so last parameter is always an offset
