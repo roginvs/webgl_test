@@ -220,6 +220,7 @@ const render = (coef = 1) => {
 
 render(1);
 
+const tmpRotate = mat4.create();
 canvas.onmousemove = (e) => {
   if (!e.buttons) {
     return;
@@ -228,12 +229,15 @@ canvas.onmousemove = (e) => {
   const dx = e.movementX;
   const dy = e.movementY;
 
+  mat4.identity(tmpRotate);
   if (dx !== 0) {
-    mat4.rotate(cubeTransformMatrix, cubeTransformMatrix, dx / 150, [0, 1, 0]);
+    mat4.rotate(tmpRotate, tmpRotate, dx / 150, [0, 1, 0]);
   }
   if (dy !== 0) {
-    mat4.rotate(cubeTransformMatrix, cubeTransformMatrix, dy / 150, [1, 0, 0]);
+    mat4.rotate(tmpRotate, tmpRotate, dy / 150, [1, 0, 0]);
   }
+
+  mat4.multiply(cubeTransformMatrix, tmpRotate, cubeTransformMatrix);
 
   render();
 };
