@@ -174,7 +174,8 @@ gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
 /// ============  rendering ================
 
 const rotationMatrix = mat4.create();
-mat4.fromRotation(rotationMatrix, Math.PI / 5, [2, 1, 0]);
+mat4.rotate(rotationMatrix, rotationMatrix, Math.PI / 5, [2, 1, 0]);
+//mat4.fromRotation(rotationMatrix, Math.PI / 5, [2, 1, 0]);
 
 const scaleMatrix = mat4.create();
 mat4.scale(scaleMatrix, scaleMatrix, [0.2, 0.2, 0.2]);
@@ -188,6 +189,8 @@ mat4.perspective(projectionMatrix, 45, 1, 0.1, 100);
 const transformMatrix = mat4.create();
 
 const render = (coef = 1) => {
+  console.info("Render");
+
   // No need to clear - it is done implicitly by webgl
   //gl.clear(gl.COLOR_BUFFER_BIT);
 
@@ -268,10 +271,23 @@ const render = (coef = 1) => {
 };
 
 render(1);
-setTimeout(() => {
-  console.info("New render");
-  render(1);
-}, 1000);
+
+canvas.onmousemove = (e) => {
+  if (!e.buttons) {
+    return;
+  }
+
+  const dx = e.movementX;
+  const dy = e.movementY;
+  if (dx !== 0) {
+    mat4.rotate(rotationMatrix, rotationMatrix, dx / 50, [0, 1, 0]);
+  }
+  if (dy !== 0) {
+    mat4.rotate(rotationMatrix, rotationMatrix, dy / 50, [1, 0, 0]);
+  }
+
+  render();
+};
 /*
 
 const u_Color_location = gl.getUniformLocation(program, "u_Color");
