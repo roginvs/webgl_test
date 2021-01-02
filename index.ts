@@ -135,6 +135,7 @@ if (!gl.getProgramParameter(program, gl.VALIDATE_STATUS)) {
 
 const a_Vertex_location = gl.getAttribLocation(program, "a_Vertex_loc");
 const a_Vertex_color = gl.getAttribLocation(program, "a_Vertex_color");
+const a_Vertex_normal = gl.getAttribLocation(program, "a_Vertex_normal");
 const u_Transform_location = gl.getUniformLocation(program, "u_Transform");
 
 gl.useProgram(program);
@@ -165,7 +166,7 @@ gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
 //gl.depthRange(0, 1000);
 
 // Uncomment this to skip clock-wide triangles
-//gl.enable(gl.CULL_FACE);
+gl.enable(gl.CULL_FACE);
 
 //
 //
@@ -173,7 +174,7 @@ gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
 /// ============  rendering ================
 
 const rotationMatrix = mat4.create();
-mat4.fromRotation(rotationMatrix, Math.PI / 8, [2, 1, 0]);
+mat4.fromRotation(rotationMatrix, Math.PI / 5, [2, 1, 0]);
 
 const scaleMatrix = mat4.create();
 mat4.scale(scaleMatrix, scaleMatrix, [0.2, 0.2, 0.2]);
@@ -231,10 +232,11 @@ const render = (coef = 1) => {
   gl.lineWidth(2);
   gl.drawArrays(gl.LINE_LOOP, 9, 3);
 
-  //
+  // ================
   // cube
   gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexesBufId);
 
+  // Location
   gl.vertexAttribPointer(
     a_Vertex_location,
     3 /* Values per vertex */,
@@ -244,6 +246,18 @@ const render = (coef = 1) => {
     0 /* offset */
   );
   gl.enableVertexAttribArray(a_Vertex_location);
+
+  // Normal
+  gl.vertexAttribPointer(
+    a_Vertex_normal,
+    3 /* Values per vertex */,
+    gl.FLOAT,
+    false,
+    8 * FLOAT_SIZE /* Stride side is full size in bytes */,
+    (3 + 2) * FLOAT_SIZE /* offset */
+  );
+  gl.enableVertexAttribArray(a_Vertex_normal);
+
   // Color is same
   gl.vertexAttrib4f(a_Vertex_color, 0.9, 0, 0.4, 1);
   gl.disableVertexAttribArray(a_Vertex_color);
