@@ -176,7 +176,7 @@ mat4.rotate(cameraViewMatrix, cameraViewMatrix, Math.PI / 5, [1, 1, 0]);
 const projectionMatrix = mat4.create();
 mat4.perspective(projectionMatrix, 45, 1, 0.1, 100);
 
-const render = (coef = 1) => {
+const render = () => {
   console.info("Render");
 
   gl.uniformMatrix4fv(u_model_location, false, cubeTransformMatrix);
@@ -218,7 +218,7 @@ const render = (coef = 1) => {
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
 };
 
-render(1);
+render();
 
 const tmpRotate = mat4.create();
 canvas.onmousemove = (e) => {
