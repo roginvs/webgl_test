@@ -228,14 +228,13 @@ canvas.onmousemove = (e) => {
   const dx = e.movementX;
   const dy = e.movementY;
 
-  /*
   if (dx !== 0) {
-    mat4.rotate(rotationMatrix, rotationMatrix, dx / 50, [0, 1, 0]);
+    mat4.rotate(cubeTransformMatrix, cubeTransformMatrix, dx / 150, [0, 1, 0]);
   }
   if (dy !== 0) {
-    mat4.rotate(rotationMatrix, rotationMatrix, dy / 50, [1, 0, 0]);
+    mat4.rotate(cubeTransformMatrix, cubeTransformMatrix, dy / 150, [1, 0, 0]);
   }
-  */
+
   render();
 };
 /*
