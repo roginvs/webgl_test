@@ -166,7 +166,7 @@ gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
 //gl.depthRange(0, 1000);
 
 // Uncomment this to skip clock-wide triangles
-gl.enable(gl.CULL_FACE);
+// gl.enable(gl.CULL_FACE);
 
 //
 //
@@ -259,7 +259,7 @@ const render = (coef = 1) => {
   gl.enableVertexAttribArray(a_Vertex_normal);
 
   // Color is same
-  gl.vertexAttrib4f(a_Vertex_color, 0.9, 0, 0.4, 1);
+  gl.vertexAttrib4f(a_Vertex_color, 0.0, 0.5, 0.8, 1);
   gl.disableVertexAttribArray(a_Vertex_color);
 
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cubeVertexesIndexesBufId);
