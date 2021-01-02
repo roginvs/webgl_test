@@ -19,7 +19,7 @@ function parseObj(objRaw: string) {
    */
   const faceVertexes = new Map<string, FaceVertex>();
 
-  const triangles: number[] = [];
+  const packedVertexes: number[] = [];
   const indexes: number[] = [];
 
   for (const line of objRaw.split(/\n|\r/).filter((x) => x)) {
@@ -111,30 +111,34 @@ function parseObj(objRaw: string) {
           vertexData.normal[2],
         ];
       };
+      // console.info(`Face indexes = ${v1.index} ${v2.index} ${v3.index}`);
       for (const v of [v1, v2, v3]) {
         if (!v.alreadyInTriagles) {
-          triangles.push(...packVertex(v));
+          const packedData = packVertex(v);
+          // console.info(`  pushing idx=${v.index}`);
+          // console.info(`  data is ${packedData.join(" ")}`);
+          packedVertexes.push(...packedData);
         }
-        indexes.push(v1.index);
-        indexes.push(v2.index);
-        indexes.push(v3.index);
       }
+      indexes.push(v1.index);
+      indexes.push(v2.index);
+      indexes.push(v3.index);
     }
   }
 
-  if (triangles.length % 8 !== 0) {
+  if (packedVertexes.length % 8 !== 0) {
     throw new Error("internal error");
   }
 
   for (const index of indexes) {
-    if (index >= triangles.length / 8) {
+    if (index >= packedVertexes.length / 8) {
       throw new Error(`Internal error: index out of bounds`);
     }
   }
 
   const GL_UNSIGNED_SHORT = 0x1403;
   return {
-    triangles: new Float32Array(triangles),
+    vertexes: new Float32Array(packedVertexes),
     indexes: new Uint16Array(indexes),
     indexType: GL_UNSIGNED_SHORT,
   };

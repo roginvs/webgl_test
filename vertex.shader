@@ -20,6 +20,6 @@ void main() {
   float normal_vs_ligth = dot(a_Vertex_normal.xyz, vec3(1.0, 1.0, 1.0));
   
   v_Vertex_color = a_Vertex_color * normal_vs_ligth;
-  v_Vertex_color = a_Vertex_normal;
+  v_Vertex_color = abs(a_Vertex_normal);
   //v_Vertex_color.rgb = a_Vertex_color.gbr;
 }
