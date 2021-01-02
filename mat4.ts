@@ -16,6 +16,8 @@ export type Matrix4 = Float32Array & {
 
 export type Vector = [number, number, number];
 
+export type Vector2d = [number, number];
+
 export const EPSILON = 0.000001;
 
 const degree = Math.PI / 180;
