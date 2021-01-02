@@ -132,11 +132,13 @@ function parseObj(objRaw: string) {
     }
   }
 
+  const GL_UNSIGNED_SHORT = 0x1403;
   return {
     triangles: new Float32Array(triangles),
     indexes: new Uint16Array(indexes),
+    indexType: GL_UNSIGNED_SHORT,
   };
 }
 
-const objRaw = readFileSync("./cube/cube.obj").toString();
-parseObj(objRaw);
+const objRaw = readFileSync("./cube/cube.obj", "utf-8");
+export const cube = parseObj(objRaw);

@@ -1,7 +1,8 @@
 import { assert } from "console";
 import { readFileSync } from "fs";
-import { vertexes, cubeVertexes, cubeIndexes } from "./data";
+import { vertexes } from "./data";
 import * as mat4 from "./mat4";
+import { cube } from "./obj";
 
 console.info("lol");
 
@@ -150,14 +151,14 @@ if (!cubeVertexesBufId) {
   throw new Error("Failed to create cubeVertexesBuf");
 }
 gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexesBufId);
-gl.bufferData(gl.ARRAY_BUFFER, cubeVertexes, gl.STATIC_DRAW);
+gl.bufferData(gl.ARRAY_BUFFER, cube.triangles, gl.STATIC_DRAW);
 
 const cubeVertexesIndexesBufId = gl.createBuffer();
 if (!cubeVertexesIndexesBufId) {
   throw new Error("Failed to create cubeVertexesBuf");
 }
 gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cubeVertexesIndexesBufId);
-gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, cubeIndexes, gl.STATIC_DRAW);
+gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, cube.indexes, gl.STATIC_DRAW);
 gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
 
 // Probably no need this
@@ -173,8 +174,13 @@ gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
 
 const rotationMatrix = mat4.create();
 mat4.fromRotation(rotationMatrix, Math.PI / 8, [2, 1, 0]);
+
+const scaleMatrix = mat4.create();
+mat4.scale(scaleMatrix, scaleMatrix, [0.2, 0.2, 0.2]);
+
 const translateMatrix = mat4.create();
 mat4.translate(translateMatrix, translateMatrix, [0, 0, -2]);
+
 const projectionMatrix = mat4.create();
 mat4.perspective(projectionMatrix, 45, 1, 0.1, 100);
 
@@ -188,6 +194,7 @@ const render = (coef = 1) => {
   //transformMatrix[5] = 1 / coef;
   mat4.multiply(transformMatrix, projectionMatrix, translateMatrix);
   mat4.multiply(transformMatrix, transformMatrix, rotationMatrix);
+  mat4.multiply(transformMatrix, transformMatrix, scaleMatrix);
   gl.uniformMatrix4fv(u_Transform_location, false, transformMatrix);
 
   // WebGL always uses GPU memory, so last parameter is always an offset
@@ -226,7 +233,6 @@ const render = (coef = 1) => {
 
   //
   // cube
-  // TODO: Why no depth?
   gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexesBufId);
 
   gl.vertexAttribPointer(
@@ -234,7 +240,7 @@ const render = (coef = 1) => {
     3 /* Values per vertex */,
     gl.FLOAT,
     false,
-    3 * FLOAT_SIZE /* Stride side is full size in bytes */,
+    8 * FLOAT_SIZE /* Stride side is full size in bytes */,
     0 /* offset */
   );
   gl.enableVertexAttribArray(a_Vertex_location);
@@ -243,7 +249,7 @@ const render = (coef = 1) => {
   gl.disableVertexAttribArray(a_Vertex_color);
 
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cubeVertexesIndexesBufId);
-  gl.drawElements(gl.LINE_STRIP, cubeIndexes.length, gl.UNSIGNED_SHORT, 0);
+  gl.drawElements(gl.TRIANGLES, cube.indexes.length, cube.indexType, 0);
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
 };
 

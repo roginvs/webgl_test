@@ -10,3 +10,6 @@ https://github.com/mdn/webgl-examples/tree/gh-pages/tutorial/sample5
 
 A book
 http://ommolketab.ir/aaf-lib/osx3qpl2tai1kt8118arqs2poeqfcp.pdf
+
+Obj file info
+http://paulbourke.net/dataformats/obj/
