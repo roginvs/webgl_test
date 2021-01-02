@@ -166,11 +166,11 @@ gl.enable(gl.DEPTH_TEST);
 /// ============  rendering ================
 
 const cubeTransformMatrix = mat4.create();
-mat4.scale(cubeTransformMatrix, cubeTransformMatrix, [0.2, 0.2, 0.2]);
+mat4.scale(cubeTransformMatrix, cubeTransformMatrix, [1, 1, 1]);
 //mat4.translate(cubeTransformMatrix, cubeTransformMatrix, [0, 0, -2]);
 
 const cameraViewMatrix = mat4.create();
-mat4.translate(cameraViewMatrix, cameraViewMatrix, [0, 0, -1]);
+mat4.translate(cameraViewMatrix, cameraViewMatrix, [0, 0, -6]);
 mat4.rotate(cameraViewMatrix, cameraViewMatrix, Math.PI / 5, [1, 1, 0]);
 
 const projectionMatrix = mat4.create();
