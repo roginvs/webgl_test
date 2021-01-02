@@ -16,6 +16,8 @@ export type Matrix4 = Float32Array & {
 
 export type Vector = [number, number, number];
 
+export type Vector2d = [number, number];
+
 export const EPSILON = 0.000001;
 
 const degree = Math.PI / 180;
@@ -276,5 +278,36 @@ export function translate(out: Matrix4, a: Matrix4, v: Vector) {
     out[14] = a02 * x + a12 * y + a22 * z + a[14];
     out[15] = a03 * x + a13 * y + a23 * z + a[15];
   }
+  return out;
+}
+
+/**
+ * Scales the mat4 by the dimensions in the given vec3 not using vectorization
+ *
+ * @param {mat4} out the receiving matrix
+ * @param {ReadonlyMat4} a the matrix to scale
+ * @param {ReadonlyVec3} v the vec3 to scale the matrix by
+ * @returns {mat4} out
+ **/
+export function scale(out: Matrix4, a: Matrix4, v: Vector) {
+  let x = v[0],
+    y = v[1],
+    z = v[2];
+  out[0] = a[0] * x;
+  out[1] = a[1] * x;
+  out[2] = a[2] * x;
+  out[3] = a[3] * x;
+  out[4] = a[4] * y;
+  out[5] = a[5] * y;
+  out[6] = a[6] * y;
+  out[7] = a[7] * y;
+  out[8] = a[8] * z;
+  out[9] = a[9] * z;
+  out[10] = a[10] * z;
+  out[11] = a[11] * z;
+  out[12] = a[12];
+  out[13] = a[13];
+  out[14] = a[14];
+  out[15] = a[15];
   return out;
 }
