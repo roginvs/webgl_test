@@ -171,14 +171,22 @@ gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
 //
 /// ============  rendering ================
 
+const rotationMatrix = mat4.create();
+const translateMatrix = mat4.create();
+mat4.translate(translateMatrix, translateMatrix, [0, 0, -2]);
+console.info(translateMatrix);
+const projectionMatrix = mat4.create();
+mat4.perspective(projectionMatrix, 45, 1, 0.1, 100);
+
 const transformMatrix = mat4.create();
 
 const render = (coef = 1) => {
   // No need to clear - it is done implicitly by webgl
   //gl.clear(gl.COLOR_BUFFER_BIT);
 
-  transformMatrix[0] = 1 * coef;
-  transformMatrix[5] = 1 / coef;
+  //transformMatrix[0] = 1 * coef;
+  //transformMatrix[5] = 1 / coef;
+  mat4.multiply(transformMatrix, projectionMatrix, translateMatrix);
   gl.uniformMatrix4fv(u_Transform_location, false, transformMatrix);
 
   // WebGL always uses GPU memory, so last parameter is always an offset
