@@ -22,7 +22,7 @@ void main() {
 
  
 
-  float normal_vs_ligth = dot(world_normal.xyz, normalize(vec3(-3, 3, 1)));
+  float normal_vs_ligth = max(0.0, dot(world_normal.xyz, normalize(vec3(-3, 3, 1))));
 
   v_Vertex_color = a_Vertex_color * normal_vs_ligth;
   //v_Vertex_color = ;
