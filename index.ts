@@ -113,7 +113,6 @@ if (!gl.getProgramParameter(program, gl.VALIDATE_STATUS)) {
 // gl.bindAttribLocation(program, 0, "a_Vertex");
 
 const a_Vertex_location = gl.getAttribLocation(program, "a_Vertex_loc");
-const a_Vertex_color = gl.getAttribLocation(program, "a_Vertex_color");
 const a_Vertex_normal = gl.getAttribLocation(program, "a_Vertex_normal");
 const a_Vertex_texture = gl.getAttribLocation(program, "a_Vertex_texture");
 const u_model_location = gl.getUniformLocation(program, "u_model");
@@ -241,10 +240,6 @@ const render = () => {
     3 * FLOAT_SIZE /* offset */
   );
   gl.enableVertexAttribArray(a_Vertex_texture);
-
-  // Color is same
-  gl.vertexAttrib4f(a_Vertex_color, 0.0, 0.5, 0.8, 1);
-  gl.disableVertexAttribArray(a_Vertex_color);
 
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cubeVertexesIndexesBufId);
 

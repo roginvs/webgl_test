@@ -8,7 +8,7 @@ uniform   mat4 u_projection;
 // uniform   vec4 u_Color;
 
 attribute vec3 a_Vertex_loc;
-attribute vec3 a_Vertex_color; // TODO remove this from code - it is unused
+
 attribute vec3 a_Vertex_normal;
 attribute vec2 a_Vertex_texture;
 
