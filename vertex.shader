@@ -23,7 +23,12 @@ void main() {
   gl_Position = u_projection * u_view * world_pos;
 
  
-  vec3 diffuse_light_vector = normalize(vec3(-3, 3, 1));
+
+  vec3 diffuse_light_location = vec3(-3.0, 3.0, 2.0);
+  vec3 diffuse_light_vector = normalize(diffuse_light_location - world_pos.xyz);
+  
+
+
   float normal_vs_ligth = max(0.0, dot(world_normal.xyz, diffuse_light_vector));
 
   v_Vertex_color = a_Vertex_color * normal_vs_ligth;
