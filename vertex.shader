@@ -8,10 +8,12 @@ uniform   mat4 u_projection;
 // uniform   vec4 u_Color;
 
 attribute vec3 a_Vertex_loc;
-attribute vec3 a_Vertex_color;
+attribute vec3 a_Vertex_color; // TODO remove this from code - it is unused
 attribute vec3 a_Vertex_normal;
+attribute vec2 a_Vertex_texture;
 
-varying vec3 v_Vertex_color;
+varying vec3 v_light_color;
+varying vec2 v_texture_coordinate;
 
 void main() {
   vec4 world_pos = u_model * vec4(a_Vertex_loc, 1.0);;
@@ -33,7 +35,8 @@ void main() {
 
   float ambient_coefficient = 0.2;
 
-  v_Vertex_color = a_Vertex_color * (diffuse_coefficient + ambient_coefficient);
+  v_light_color = vec3(1.0, 1.0, 1.0) * (diffuse_coefficient + ambient_coefficient);
+  v_texture_coordinate = a_Vertex_texture;
   //v_Vertex_color = ;
   //v_Vertex_color.rgb = a_Vertex_color.gbr;
 }

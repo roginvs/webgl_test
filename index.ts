@@ -115,6 +115,7 @@ if (!gl.getProgramParameter(program, gl.VALIDATE_STATUS)) {
 const a_Vertex_location = gl.getAttribLocation(program, "a_Vertex_loc");
 const a_Vertex_color = gl.getAttribLocation(program, "a_Vertex_color");
 const a_Vertex_normal = gl.getAttribLocation(program, "a_Vertex_normal");
+const a_Vertex_texture = gl.getAttribLocation(program, "a_Vertex_texture");
 const u_model_location = gl.getUniformLocation(program, "u_model");
 const u_view_location = gl.getUniformLocation(program, "u_view");
 const u_projection_location = gl.getUniformLocation(program, "u_projection");
@@ -229,6 +230,17 @@ const render = () => {
     (3 + 2) * FLOAT_SIZE /* offset */
   );
   gl.enableVertexAttribArray(a_Vertex_normal);
+
+  // Texture coords
+  gl.vertexAttribPointer(
+    a_Vertex_texture,
+    2 /* Values per vertex */,
+    gl.FLOAT,
+    false,
+    8 * FLOAT_SIZE /* Stride side is full size in bytes */,
+    3 * FLOAT_SIZE /* offset */
+  );
+  gl.enableVertexAttribArray(a_Vertex_texture);
 
   // Color is same
   gl.vertexAttrib4f(a_Vertex_color, 0.0, 0.5, 0.8, 1);
