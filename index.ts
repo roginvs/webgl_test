@@ -23,16 +23,6 @@ function checkErr() {
   }
 }
 
-// console.info(`Size`, gl.getBufferParameter(gl.ARRAY_BUFFER, gl.BUFFER_USAGE));
-
-/*
-// Example of how to read data from buffer in webgl2
-const myBuf = new Float32Array(10);
-gl.getBufferSubData(gl.ARRAY_BUFFER, 0, myBuf);
-checkErr();
-console.info(myBuf);
-*/
-
 const shader1 = gl.createShader(gl.VERTEX_SHADER);
 const shader2 = gl.createShader(gl.FRAGMENT_SHADER);
 if (!shader1 || !shader2) {
@@ -161,6 +151,28 @@ gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
 gl.enable(gl.DEPTH_TEST);
 
 //
+// texture
+
+const texture = gl.createTexture();
+if (!texture) {
+  throw new Error("Failed to create texture");
+}
+gl.bindTexture(gl.TEXTURE_2D, texture);
+/*
+gl.texImage2D(
+  gl.TEXTURE_2D,
+  // mip level
+  0,
+  gl.RGB,
+  256,
+  256,
+  0,
+  gl.RGB,
+  gl.UNSIGNED_BYTE
+);
+*/
+
+//
 //
 //
 /// ============  rendering ================
@@ -268,3 +280,4 @@ gl.enableVertexAttribArray(a_Vertex_location);
 // Draw all of the triangles
 gl.drawArrays(gl.TRIANGLES, 0, 12);
 */
+
