@@ -27,11 +27,11 @@ void main() {
   vec3 diffuse_light_location = vec3(-3.0, 3.0, 2.0);
   vec3 diffuse_light_vector = normalize(diffuse_light_location - world_pos.xyz);
   
+  float diffuse_coefficient = max(0.0, dot(world_normal.xyz, diffuse_light_vector));
 
+  float ambient_coefficient = 0.2;
 
-  float normal_vs_ligth = max(0.0, dot(world_normal.xyz, diffuse_light_vector));
-
-  v_Vertex_color = a_Vertex_color * normal_vs_ligth;
+  v_Vertex_color = a_Vertex_color * (diffuse_coefficient + ambient_coefficient);
   //v_Vertex_color = ;
   //v_Vertex_color.rgb = a_Vertex_color.gbr;
 }
