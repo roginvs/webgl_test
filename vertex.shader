@@ -17,6 +17,8 @@ void main() {
   vec4 world_pos = u_model * vec4(a_Vertex_loc, 1.0);;
   
   // TODO: Use separate matrix for normals which contains only rotations
+  // Which is possible to get from model matrix with some math
+  // Provide this 3x3 matrix as uniform
   vec3 world_normal = normalize( (u_model * vec4(a_Vertex_normal, 1.0)).xyz);
 
   // Transform the location of the vertex
