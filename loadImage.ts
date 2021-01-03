@@ -1,4 +1,4 @@
-export async function imageToBinaryArray(
+export async function loadImage(
   imgSrc = "https://spacerangers.gitlab.io/favicon.png"
 ) {
   // Block magic to bypass CORS issues

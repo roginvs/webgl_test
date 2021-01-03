@@ -1,6 +1,7 @@
 import { assert } from "console";
 import { readFileSync } from "fs";
 import * as mat4 from "./mat4";
+import { loadImage } from "./loadImage";
 import { cube } from "./obj";
 
 console.info("lol");
@@ -158,19 +159,22 @@ if (!texture) {
   throw new Error("Failed to create texture");
 }
 gl.bindTexture(gl.TEXTURE_2D, texture);
-/*
-gl.texImage2D(
-  gl.TEXTURE_2D,
-  // mip level
-  0,
-  gl.RGB,
-  256,
-  256,
-  0,
-  gl.RGB,
-  gl.UNSIGNED_BYTE
-);
-*/
+loadImage().then((imgData) => {
+  gl.texImage2D(
+    gl.TEXTURE_2D,
+    // mip level
+    0,
+    gl.RGBA,
+    imgData.width,
+    imgData.height,
+    0,
+    gl.RGBA,
+    gl.UNSIGNED_BYTE,
+    imgData.data
+  );
+  console.info("Texture loaded");
+  render();
+});
 
 //
 //
@@ -230,7 +234,7 @@ const render = () => {
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
 };
 
-render();
+// render();
 
 const tmpRotate = mat4.create();
 canvas.onmousemove = (e) => {
@@ -280,4 +284,3 @@ gl.enableVertexAttribArray(a_Vertex_location);
 // Draw all of the triangles
 gl.drawArrays(gl.TRIANGLES, 0, 12);
 */
-
