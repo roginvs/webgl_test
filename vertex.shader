@@ -15,6 +15,8 @@ varying vec3 v_Vertex_color;
 
 void main() {
   vec4 world_pos = u_model * vec4(a_Vertex_loc, 1.0);;
+  
+  // TODO: Use separate matrix for normals which contains only rotations
   vec3 world_normal = normalize( (u_model * vec4(a_Vertex_normal, 1.0)).xyz);
 
   // Transform the location of the vertex
