@@ -154,6 +154,8 @@ gl.enable(gl.DEPTH_TEST);
 //
 // texture
 
+// Uncomment this if needed
+// gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1)
 const texture = gl.createTexture();
 if (!texture) {
   throw new Error("Failed to create texture");
