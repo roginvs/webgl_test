@@ -1,4 +1,12 @@
-# Links
+# University assignment
+
+Just a small playground for webgl
+
+## Demo
+
+<https://roginvs.github.io/webgl_test/>
+
+## Links
 
 https://www.khronos.org/registry/webgl/specs/latest/1.0/#5.2
 
