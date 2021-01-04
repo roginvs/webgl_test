@@ -161,7 +161,7 @@ if (!texture) {
   throw new Error("Failed to create texture");
 }
 gl.bindTexture(gl.TEXTURE_2D, texture);
-loadImage().then((imgData) => {
+loadImage("texture.png").then((imgData) => {
   gl.texImage2D(
     gl.TEXTURE_2D,
     // mip level
