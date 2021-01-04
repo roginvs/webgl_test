@@ -1,7 +1,7 @@
 import { assert } from "console";
 import { readFileSync } from "fs";
 import * as mat4 from "./mat4";
-import { loadImage } from "./loadImage";
+import { loadCubebox, loadImage } from "./loadImage";
 import { cube } from "./obj";
 
 document.getElementById("build_date")!.innerHTML = `Built at ${new Date(
@@ -184,6 +184,11 @@ if (!modelTexture) {
   throw new Error("Failed to create texture");
 }
 
+const cubeboxTexture = gl.createTexture();
+if (!cubeboxTexture) {
+  throw new Error("Failed to create texture");
+}
+
 loadImage("texture.png").then((imgData) => {
   gl.activeTexture(gl.TEXTURE10);
   gl.bindTexture(gl.TEXTURE_2D, modelTexture);
@@ -203,7 +208,50 @@ loadImage("texture.png").then((imgData) => {
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
 
-  console.info("Texture loaded");
+  console.info("Model texture loaded");
+
+  render();
+});
+
+loadCubebox("cubebox.jpg").then((imagesData) => {
+  gl.activeTexture(gl.TEXTURE20);
+  gl.bindTexture(gl.TEXTURE_CUBE_MAP, cubeboxTexture);
+
+  const kinds = [
+    gl.TEXTURE_CUBE_MAP_POSITIVE_Y,
+    gl.TEXTURE_CUBE_MAP_NEGATIVE_X,
+    gl.TEXTURE_CUBE_MAP_NEGATIVE_Z,
+    gl.TEXTURE_CUBE_MAP_POSITIVE_X,
+    gl.TEXTURE_CUBE_MAP_POSITIVE_Z,
+    gl.TEXTURE_CUBE_MAP_NEGATIVE_Y,
+  ];
+
+  for (const imageData of imagesData.map((data, idx) => ({
+    ...data,
+    kind: kinds[idx],
+  }))) {
+    gl.texImage2D(
+      imageData.kind,
+      // mip level
+      0,
+      gl.RGBA,
+      imageData.width,
+      imageData.height,
+      0,
+      gl.RGBA,
+      gl.UNSIGNED_BYTE,
+      imageData.data
+    );
+  }
+
+  gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+  gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+
+  // TODO: What are those wrapping and do we need them?
+  gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+
+  console.info("Cubebox texture loaded");
 
   render();
 });
