@@ -249,27 +249,45 @@ const render = () => {
 
 // render();
 
-const tmpRotate = mat4.create();
-canvas.onmousemove = (e) => {
-  if (!e.buttons) {
-    return;
-  }
+const tmpMatrix = mat4.create();
+canvas.addEventListener(
+  "mousemove",
+  (e) => {
+    if (!e.buttons) {
+      return;
+    }
 
-  const dx = e.movementX;
-  const dy = e.movementY;
+    const dx = e.movementX;
+    const dy = e.movementY;
 
-  mat4.identity(tmpRotate);
-  if (dx !== 0) {
-    mat4.rotate(tmpRotate, tmpRotate, dx / 150, [0, 1, 0]);
-  }
-  if (dy !== 0) {
-    mat4.rotate(tmpRotate, tmpRotate, dy / 150, [1, 0, 0]);
-  }
+    mat4.identity(tmpMatrix);
+    if (dx !== 0) {
+      mat4.rotate(tmpMatrix, tmpMatrix, dx / 150, [0, 1, 0]);
+    }
+    if (dy !== 0) {
+      mat4.rotate(tmpMatrix, tmpMatrix, dy / 150, [1, 0, 0]);
+    }
 
-  mat4.multiply(cubeTransformMatrix, tmpRotate, cubeTransformMatrix);
+    mat4.multiply(cubeTransformMatrix, tmpMatrix, cubeTransformMatrix);
 
-  render();
-};
+    render();
+  },
+  { passive: true }
+);
+
+canvas.addEventListener(
+  "mousewheel",
+  (event) => {
+    const delta = (event as any).deltaY;
+
+    mat4.identity(tmpMatrix);
+    mat4.translate(tmpMatrix, tmpMatrix, [0, 0, delta / 150]);
+    mat4.multiply(cameraViewMatrix, tmpMatrix, cameraViewMatrix);
+
+    render();
+  },
+  { passive: false }
+);
 /*
 
 const u_Color_location = gl.getUniformLocation(program, "u_Color");
