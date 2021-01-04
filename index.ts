@@ -179,14 +179,14 @@ gl.enable(gl.DEPTH_TEST);
 
 // Uncomment this if needed
 // gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1)
-const texture = gl.createTexture();
-if (!texture) {
+const modelTexture = gl.createTexture();
+if (!modelTexture) {
   throw new Error("Failed to create texture");
 }
 
 loadImage("texture.png").then((imgData) => {
   gl.activeTexture(gl.TEXTURE10);
-  gl.bindTexture(gl.TEXTURE_2D, texture);
+  gl.bindTexture(gl.TEXTURE_2D, modelTexture);
   gl.texImage2D(
     gl.TEXTURE_2D,
     // mip level
