@@ -4,7 +4,9 @@ import * as mat4 from "./mat4";
 import { loadImage } from "./loadImage";
 import { cube } from "./obj";
 
-console.info("lol");
+document.getElementById("build_date")!.innerHTML = `Built at ${new Date(
+  parseInt(process.env.BUILD_TIME || "") * 1000
+).toLocaleString()}`;
 
 const canvas = document.getElementById("main_canvas") as HTMLCanvasElement;
 

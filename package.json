@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "parcel serve --port 5002 *.html",
-    "build": "parcel build *.html",
+    "start": "BUILD_TIME=$(date +%s) parcel serve --port 5002 *.html",
+    "build": "BUILD_TIME=$(date +%s) parcel build --public-url ./ *.html",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
