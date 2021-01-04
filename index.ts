@@ -183,9 +183,10 @@ const texture = gl.createTexture();
 if (!texture) {
   throw new Error("Failed to create texture");
 }
-gl.activeTexture(gl.TEXTURE10);
-gl.bindTexture(gl.TEXTURE_2D, texture);
+
 loadImage("texture.png").then((imgData) => {
+  gl.activeTexture(gl.TEXTURE10);
+  gl.bindTexture(gl.TEXTURE_2D, texture);
   gl.texImage2D(
     gl.TEXTURE_2D,
     // mip level
@@ -203,6 +204,7 @@ loadImage("texture.png").then((imgData) => {
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
 
   console.info("Texture loaded");
+
   render();
 });
 
