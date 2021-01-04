@@ -184,10 +184,12 @@ if (!modelTexture) {
   throw new Error("Failed to create texture");
 }
 
+/*
 const cubeboxTexture = gl.createTexture();
 if (!cubeboxTexture) {
   throw new Error("Failed to create texture");
 }
+*/
 
 loadImage("texture.png").then((imgData) => {
   gl.activeTexture(gl.TEXTURE10);
@@ -213,6 +215,7 @@ loadImage("texture.png").then((imgData) => {
   render();
 });
 
+/*
 loadCubebox("cubebox.jpg").then((imagesData) => {
   gl.activeTexture(gl.TEXTURE20);
   gl.bindTexture(gl.TEXTURE_CUBE_MAP, cubeboxTexture);
@@ -255,6 +258,7 @@ loadCubebox("cubebox.jpg").then((imagesData) => {
 
   render();
 });
+*/
 
 //
 //
