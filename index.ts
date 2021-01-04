@@ -295,8 +295,13 @@ canvas.addEventListener(
       mat4.rotate(tmpMatrix, tmpMatrix, dy / 150, [1, 0, 0]);
     }
 
-    mat4.multiply(cubeTransformMatrix, tmpMatrix, cubeTransformMatrix);
+    if (e.shiftKey) {
+      // Rotate object
 
+      mat4.multiply(cubeTransformMatrix, tmpMatrix, cubeTransformMatrix);
+    } else {
+      mat4.multiply(cameraViewMatrix, cameraViewMatrix, tmpMatrix);
+    }
     render();
   },
   { passive: true }
