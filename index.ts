@@ -297,9 +297,9 @@ canvas.addEventListener(
 
     if (e.shiftKey) {
       // Rotate object
-
       mat4.multiply(cubeTransformMatrix, tmpMatrix, cubeTransformMatrix);
     } else {
+      // Rotate camera
       mat4.multiply(cameraViewMatrix, cameraViewMatrix, tmpMatrix);
     }
     render();
