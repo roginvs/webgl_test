@@ -313,11 +313,13 @@ mat4.scale(cubeTransformMatrix, cubeTransformMatrix, [1, 1, 1]);
 
 const cameraViewMatrix = mat4.create();
 mat4.translate(cameraViewMatrix, cameraViewMatrix, [0, 0, -6]);
-mat4.rotate(cameraViewMatrix, cameraViewMatrix, Math.PI / 5, [1, 1, 0]);
+mat4.rotate(cameraViewMatrix, cameraViewMatrix, Math.PI / 5, [-1, 1, 0]);
 
 const projectionMatrix = mat4.create();
 mat4.perspective(projectionMatrix, 45, 1, 0.1, 100);
 
+// This should not be modified - plane is not transforming
+const planeTransform = mat4.create();
 const render = () => {
   console.info("Render");
 
@@ -356,11 +358,12 @@ const render = () => {
     gl.enableVertexAttribArray(a_Vertex_texture);
   };
 
-  gl.uniformMatrix4fv(u_model_location, false, cubeTransformMatrix);
   gl.uniformMatrix4fv(u_view_location, false, cameraViewMatrix);
   gl.uniformMatrix4fv(u_projection_location, false, projectionMatrix);
 
   // cube
+  gl.uniformMatrix4fv(u_model_location, false, cubeTransformMatrix);
+
   gl.uniform1i(u_current_texture, 10);
 
   gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexesBufId);
@@ -373,6 +376,7 @@ const render = () => {
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
 
   // plane
+  gl.uniformMatrix4fv(u_model_location, false, planeTransform);
   gl.uniform1i(u_current_texture, 11);
   gl.bindBuffer(gl.ARRAY_BUFFER, planeVertexesBufId);
   setVertexAttribPointers();
