@@ -209,7 +209,7 @@ if (!cubeboxTexture) {
 }
 */
 
-loadImage("texture.png").then((imgData) => {
+const load1 = loadImage("texture.png").then((imgData) => {
   gl.activeTexture(gl.TEXTURE10);
   gl.bindTexture(gl.TEXTURE_2D, modelTexture);
   gl.texImage2D(
@@ -229,11 +229,9 @@ loadImage("texture.png").then((imgData) => {
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
 
   console.info("Model texture loaded");
-
-  render();
 });
 
-loadImage("plane.png").then((imgData) => {
+const load2 = loadImage("plane.png").then((imgData) => {
   gl.activeTexture(gl.TEXTURE11);
   gl.bindTexture(gl.TEXTURE_2D, planeTexture);
   gl.texImage2D(
@@ -253,8 +251,12 @@ loadImage("plane.png").then((imgData) => {
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
 
   console.info("Plane texture loaded");
+});
 
+Promise.all([load1, load2]).then(() => {
+  console.info("All loaded");
   render();
+  addEventListeners();
 });
 
 /*
@@ -312,7 +314,7 @@ mat4.scale(cubeTransformMatrix, cubeTransformMatrix, [1, 1, 1]);
 //mat4.translate(cubeTransformMatrix, cubeTransformMatrix, [0, 0, -2]);
 
 const cameraViewMatrix = mat4.create();
-mat4.translate(cameraViewMatrix, cameraViewMatrix, [0, 0, -6]);
+mat4.translate(cameraViewMatrix, cameraViewMatrix, [0, 0, -10]);
 mat4.rotate(cameraViewMatrix, cameraViewMatrix, Math.PI / 5, [-1, 1, 0]);
 
 const projectionMatrix = mat4.create();
@@ -384,52 +386,53 @@ const render = () => {
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
 };
 
-// render();
-
 const tmpMatrix = mat4.create();
-canvas.addEventListener(
-  "mousemove",
-  (e) => {
-    if (!e.buttons) {
-      return;
-    }
 
-    const dx = e.movementX;
-    const dy = e.movementY;
+const addEventListeners = () => {
+  canvas.addEventListener(
+    "mousemove",
+    (e) => {
+      if (!e.buttons) {
+        return;
+      }
 
-    mat4.identity(tmpMatrix);
-    if (dx !== 0) {
-      mat4.rotate(tmpMatrix, tmpMatrix, dx / 150, [0, 1, 0]);
-    }
-    if (dy !== 0) {
-      mat4.rotate(tmpMatrix, tmpMatrix, dy / 150, [1, 0, 0]);
-    }
+      const dx = e.movementX;
+      const dy = e.movementY;
 
-    if (e.shiftKey) {
-      // Rotate object
-      mat4.multiply(cubeTransformMatrix, tmpMatrix, cubeTransformMatrix);
-    } else {
-      // Rotate camera
-      mat4.multiply(cameraViewMatrix, cameraViewMatrix, tmpMatrix);
-    }
-    render();
-  },
-  { passive: true }
-);
+      mat4.identity(tmpMatrix);
+      if (dx !== 0) {
+        mat4.rotate(tmpMatrix, tmpMatrix, dx / 150, [0, 1, 0]);
+      }
+      if (dy !== 0) {
+        mat4.rotate(tmpMatrix, tmpMatrix, dy / 150, [1, 0, 0]);
+      }
 
-canvas.addEventListener(
-  "mousewheel",
-  (event) => {
-    const delta = (event as any).deltaY;
+      if (e.shiftKey) {
+        // Rotate object
+        mat4.multiply(cubeTransformMatrix, tmpMatrix, cubeTransformMatrix);
+      } else {
+        // Rotate camera
+        mat4.multiply(cameraViewMatrix, cameraViewMatrix, tmpMatrix);
+      }
+      render();
+    },
+    { passive: true }
+  );
 
-    mat4.identity(tmpMatrix);
-    mat4.translate(tmpMatrix, tmpMatrix, [0, 0, delta / 150]);
-    mat4.multiply(cameraViewMatrix, tmpMatrix, cameraViewMatrix);
+  canvas.addEventListener(
+    "mousewheel",
+    (event) => {
+      const delta = (event as any).deltaY;
 
-    render();
-  },
-  { passive: false }
-);
+      mat4.identity(tmpMatrix);
+      mat4.translate(tmpMatrix, tmpMatrix, [0, 0, delta / 150]);
+      mat4.multiply(cameraViewMatrix, tmpMatrix, cameraViewMatrix);
+
+      render();
+    },
+    { passive: false }
+  );
+};
 /*
 
 const u_Color_location = gl.getUniformLocation(program, "u_Color");
