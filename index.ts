@@ -119,7 +119,10 @@ const u_model_location = gl.getUniformLocation(program, "u_model");
 const u_view_location = gl.getUniformLocation(program, "u_view");
 const u_projection_location = gl.getUniformLocation(program, "u_projection");
 
+const s_texture_10 = gl.getUniformLocation(program, "s_texture_10");
+
 gl.useProgram(program);
+
 checkErr();
 
 gl.clearColor(0, 0, 0, 1);
@@ -160,6 +163,7 @@ const texture = gl.createTexture();
 if (!texture) {
   throw new Error("Failed to create texture");
 }
+gl.activeTexture(gl.TEXTURE10);
 gl.bindTexture(gl.TEXTURE_2D, texture);
 loadImage("texture.png").then((imgData) => {
   gl.texImage2D(
@@ -197,6 +201,9 @@ mat4.rotate(cameraViewMatrix, cameraViewMatrix, Math.PI / 5, [1, 1, 0]);
 
 const projectionMatrix = mat4.create();
 mat4.perspective(projectionMatrix, 45, 1, 0.1, 100);
+
+// This uniform is not updated, so do not set on every render
+gl.uniform1i(s_texture_10, 10);
 
 const render = () => {
   console.info("Render");
