@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "parcel serve --port 5002 *.html",
+    "build": "parcel build *.html",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
