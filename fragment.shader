@@ -5,7 +5,7 @@ precision mediump float;
 varying vec3 v_light_color;
 varying vec2 v_texture_coordinate;
 
-// Purs texture id into this variable
+// Puts texture id into this variable
 uniform sampler2D u_current_texture;
 
 void main() {
