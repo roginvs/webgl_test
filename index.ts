@@ -26,104 +26,122 @@ function checkErr() {
   }
 }
 
-const shader1 = gl.createShader(gl.VERTEX_SHADER);
-const shader2 = gl.createShader(gl.FRAGMENT_SHADER);
-if (!shader1 || !shader2) {
-  throw new Error("No shaders");
-}
-
-const vertexShaderSource = readFileSync("./vertex.shader").toString();
-gl.shaderSource(shader1, vertexShaderSource);
-checkErr();
-
-const fragment = readFileSync("./fragment.shader").toString();
-gl.shaderSource(shader2, fragment);
-checkErr();
-
-gl.compileShader(shader1);
-checkErr();
-
-gl.compileShader(shader2);
-checkErr();
-
-if (!gl.getShaderParameter(shader1, gl.COMPILE_STATUS)) {
-  var info = gl.getShaderInfoLog(shader1);
-  throw new Error("Could not compile WebGL program. \n\n" + info);
-}
-if (!gl.getShaderParameter(shader2, gl.COMPILE_STATUS)) {
-  var info = gl.getShaderInfoLog(shader2);
-  throw new Error("Could not compile WebGL program. \n\n" + info);
-}
-
-const program = gl.createProgram();
-if (!program) {
-  throw new Error("No gl program");
-}
-
-gl.attachShader(program, shader1);
-gl.attachShader(program, shader2);
-
-gl.linkProgram(program);
-
-if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-  // There were errors, so get the errors and display them.
-  var error = gl.getProgramInfoLog(program);
-  throw new Error("Fatal error: Failed to link program: " + error);
-}
-
-console.info(`Program InfoLog="${gl.getProgramInfoLog(program)}"`);
-console.info(`shaders=${gl.getProgramParameter(program, gl.ATTACHED_SHADERS)}`);
-console.info(
-  `attributes=${gl.getProgramParameter(program, gl.ACTIVE_ATTRIBUTES)} `
-);
-for (
-  let i = 0;
-  i < gl.getProgramParameter(program, gl.ACTIVE_ATTRIBUTES);
-  i++
-) {
-  const attributeInfo = gl.getActiveAttrib(program, 0);
-  if (!attributeInfo) {
-    console.warn(`  Atttribute id=${i} no info!`);
-  } else {
-    console.info(
-      `  Atribute id=${i} name=${attributeInfo.name} size=${attributeInfo.size} type=${attributeInfo.type}`
-    );
+const createProgram = (vertexSource: string, fragmentSource: string) => {
+  const shader1 = gl.createShader(gl.VERTEX_SHADER);
+  const shader2 = gl.createShader(gl.FRAGMENT_SHADER);
+  if (!shader1 || !shader2) {
+    throw new Error("No shaders");
   }
-}
-console.info(
-  `uniforms=${gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS)} `
-);
-for (let i = 0; i < gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS); i++) {
-  const uniformInfo = gl.getActiveUniform(program, 0);
-  if (!uniformInfo) {
-    console.warn(`  Uniform id=${i} no info!`);
-  } else {
-    console.info(
-      `  Uniform id=${i} name=${uniformInfo.name} size=${uniformInfo.size} type=${uniformInfo.type}`
-    );
-  }
-}
 
-// Validation is optional and can be used for debugging
-gl.validateProgram(program);
-if (!gl.getProgramParameter(program, gl.VALIDATE_STATUS)) {
-  console.warn(`Program validate fails: ${gl.getProgramInfoLog(program)}`);
-}
+  const vertexShaderSource = vertexSource;
+  gl.shaderSource(shader1, vertexShaderSource);
+  checkErr();
+
+  const fragment = fragmentSource;
+  gl.shaderSource(shader2, fragment);
+  checkErr();
+
+  gl.compileShader(shader1);
+  checkErr();
+
+  gl.compileShader(shader2);
+  checkErr();
+
+  if (!gl.getShaderParameter(shader1, gl.COMPILE_STATUS)) {
+    var info = gl.getShaderInfoLog(shader1);
+    throw new Error("Could not compile WebGL program. \n\n" + info);
+  }
+  if (!gl.getShaderParameter(shader2, gl.COMPILE_STATUS)) {
+    var info = gl.getShaderInfoLog(shader2);
+    throw new Error("Could not compile WebGL program. \n\n" + info);
+  }
+
+  const program = gl.createProgram();
+  if (!program) {
+    throw new Error("No gl program");
+  }
+
+  gl.attachShader(program, shader1);
+  gl.attachShader(program, shader2);
+
+  gl.linkProgram(program);
+
+  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+    // There were errors, so get the errors and display them.
+    var error = gl.getProgramInfoLog(program);
+    throw new Error("Fatal error: Failed to link program: " + error);
+  }
+
+  console.info(`Program InfoLog="${gl.getProgramInfoLog(program)}"`);
+  console.info(
+    `shaders=${gl.getProgramParameter(program, gl.ATTACHED_SHADERS)}`
+  );
+  console.info(
+    `attributes=${gl.getProgramParameter(program, gl.ACTIVE_ATTRIBUTES)} `
+  );
+  for (
+    let i = 0;
+    i < gl.getProgramParameter(program, gl.ACTIVE_ATTRIBUTES);
+    i++
+  ) {
+    const attributeInfo = gl.getActiveAttrib(program, 0);
+    if (!attributeInfo) {
+      console.warn(`  Atttribute id=${i} no info!`);
+    } else {
+      console.info(
+        `  Atribute id=${i} name=${attributeInfo.name} size=${attributeInfo.size} type=${attributeInfo.type}`
+      );
+    }
+  }
+  console.info(
+    `uniforms=${gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS)} `
+  );
+  for (
+    let i = 0;
+    i < gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS);
+    i++
+  ) {
+    const uniformInfo = gl.getActiveUniform(program, 0);
+    if (!uniformInfo) {
+      console.warn(`  Uniform id=${i} no info!`);
+    } else {
+      console.info(
+        `  Uniform id=${i} name=${uniformInfo.name} size=${uniformInfo.size} type=${uniformInfo.type}`
+      );
+    }
+  }
+
+  // Validation is optional and can be used for debugging
+  gl.validateProgram(program);
+  if (!gl.getProgramParameter(program, gl.VALIDATE_STATUS)) {
+    console.warn(`Program validate fails: ${gl.getProgramInfoLog(program)}`);
+  }
+
+  return program;
+};
+
+const programModel = createProgram(
+  readFileSync("./vertex.shader").toString(),
+  readFileSync("./fragment.shader").toString()
+);
 
 // Explicit bind (TODO: Should it be before linkage?)
 // const a_Vertex_location = 0;
 // gl.bindAttribLocation(program, 0, "a_Vertex");
 
-const a_Vertex_location = gl.getAttribLocation(program, "a_Vertex_loc");
-const a_Vertex_normal = gl.getAttribLocation(program, "a_Vertex_normal");
-const a_Vertex_texture = gl.getAttribLocation(program, "a_Vertex_texture");
-const u_model_location = gl.getUniformLocation(program, "u_model");
-const u_view_location = gl.getUniformLocation(program, "u_view");
-const u_projection_location = gl.getUniformLocation(program, "u_projection");
+const a_Vertex_location = gl.getAttribLocation(programModel, "a_Vertex_loc");
+const a_Vertex_normal = gl.getAttribLocation(programModel, "a_Vertex_normal");
+const a_Vertex_texture = gl.getAttribLocation(programModel, "a_Vertex_texture");
+const u_model_location = gl.getUniformLocation(programModel, "u_model");
+const u_view_location = gl.getUniformLocation(programModel, "u_view");
+const u_projection_location = gl.getUniformLocation(
+  programModel,
+  "u_projection"
+);
 
-const s_texture_10 = gl.getUniformLocation(program, "s_texture_10");
+const s_texture_10 = gl.getUniformLocation(programModel, "s_texture_10");
 
-gl.useProgram(program);
+gl.useProgram(programModel);
 
 checkErr();
 
