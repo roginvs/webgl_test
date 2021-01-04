@@ -3,6 +3,7 @@ import { readFileSync } from "fs";
 import * as mat4 from "./mat4";
 import { loadCubebox, loadImage } from "./loadImage";
 import { cube } from "./obj";
+import { planeVertexes } from "./data";
 
 document.getElementById("build_date")!.innerHTML = `Built at ${new Date(
   parseInt(process.env.BUILD_TIME || "") * 1000
@@ -139,7 +140,10 @@ const u_projection_location = gl.getUniformLocation(
   "u_projection"
 );
 
-const s_texture_10 = gl.getUniformLocation(programModel, "s_texture_10");
+const u_current_texture = gl.getUniformLocation(
+  programModel,
+  "u_current_texture"
+);
 
 gl.useProgram(programModel);
 
@@ -164,7 +168,16 @@ if (!cubeVertexesIndexesBufId) {
 }
 gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cubeVertexesIndexesBufId);
 gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, cube.indexes, gl.STATIC_DRAW);
-gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
+gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null); // Unbind to ensure proper usage
+
+// == plane
+const planeVertexesBufId = gl.createBuffer();
+if (!planeVertexesBufId) {
+  throw new Error("Failed to create buffer for vertexes");
+}
+gl.bindBuffer(gl.ARRAY_BUFFER, planeVertexesBufId);
+gl.bufferData(gl.ARRAY_BUFFER, planeVertexes, gl.STATIC_DRAW);
+gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null); // Unbind to ensure proper usage
 
 // Probably no need this
 //gl.depthRange(0, 1000);
@@ -181,6 +194,11 @@ gl.enable(gl.DEPTH_TEST);
 // gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1)
 const modelTexture = gl.createTexture();
 if (!modelTexture) {
+  throw new Error("Failed to create texture");
+}
+
+const planeTexture = gl.createTexture();
+if (!planeTexture) {
   throw new Error("Failed to create texture");
 }
 
@@ -211,6 +229,30 @@ loadImage("texture.png").then((imgData) => {
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
 
   console.info("Model texture loaded");
+
+  render();
+});
+
+loadImage("plane.png").then((imgData) => {
+  gl.activeTexture(gl.TEXTURE11);
+  gl.bindTexture(gl.TEXTURE_2D, planeTexture);
+  gl.texImage2D(
+    gl.TEXTURE_2D,
+    // mip level
+    0,
+    gl.RGBA,
+    imgData.width,
+    imgData.height,
+    0,
+    gl.RGBA,
+    gl.UNSIGNED_BYTE,
+    imgData.data
+  );
+
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+
+  console.info("Plane texture loaded");
 
   render();
 });
@@ -276,55 +318,65 @@ mat4.rotate(cameraViewMatrix, cameraViewMatrix, Math.PI / 5, [1, 1, 0]);
 const projectionMatrix = mat4.create();
 mat4.perspective(projectionMatrix, 45, 1, 0.1, 100);
 
-// This uniform is not updated, so do not set on every render
-gl.uniform1i(s_texture_10, 10);
-
 const render = () => {
   console.info("Render");
+
+  const setVertexAttribPointers = () => {
+    // Location
+    gl.vertexAttribPointer(
+      a_Vertex_location,
+      3 /* Values per vertex */,
+      gl.FLOAT,
+      false,
+      8 * FLOAT_SIZE /* Stride side is full size in bytes */,
+      0 /* offset */
+    );
+    gl.enableVertexAttribArray(a_Vertex_location);
+
+    // Normal
+    gl.vertexAttribPointer(
+      a_Vertex_normal,
+      3 /* Values per vertex */,
+      gl.FLOAT,
+      false,
+      8 * FLOAT_SIZE /* Stride side is full size in bytes */,
+      (3 + 2) * FLOAT_SIZE /* offset */
+    );
+    gl.enableVertexAttribArray(a_Vertex_normal);
+
+    // Texture coords
+    gl.vertexAttribPointer(
+      a_Vertex_texture,
+      2 /* Values per vertex */,
+      gl.FLOAT,
+      false,
+      8 * FLOAT_SIZE /* Stride side is full size in bytes */,
+      3 * FLOAT_SIZE /* offset */
+    );
+    gl.enableVertexAttribArray(a_Vertex_texture);
+  };
 
   gl.uniformMatrix4fv(u_model_location, false, cubeTransformMatrix);
   gl.uniformMatrix4fv(u_view_location, false, cameraViewMatrix);
   gl.uniformMatrix4fv(u_projection_location, false, projectionMatrix);
 
   // cube
+  gl.uniform1i(u_current_texture, 10);
+
   gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexesBufId);
 
-  // Location
-  gl.vertexAttribPointer(
-    a_Vertex_location,
-    3 /* Values per vertex */,
-    gl.FLOAT,
-    false,
-    8 * FLOAT_SIZE /* Stride side is full size in bytes */,
-    0 /* offset */
-  );
-  gl.enableVertexAttribArray(a_Vertex_location);
-
-  // Normal
-  gl.vertexAttribPointer(
-    a_Vertex_normal,
-    3 /* Values per vertex */,
-    gl.FLOAT,
-    false,
-    8 * FLOAT_SIZE /* Stride side is full size in bytes */,
-    (3 + 2) * FLOAT_SIZE /* offset */
-  );
-  gl.enableVertexAttribArray(a_Vertex_normal);
-
-  // Texture coords
-  gl.vertexAttribPointer(
-    a_Vertex_texture,
-    2 /* Values per vertex */,
-    gl.FLOAT,
-    false,
-    8 * FLOAT_SIZE /* Stride side is full size in bytes */,
-    3 * FLOAT_SIZE /* offset */
-  );
-  gl.enableVertexAttribArray(a_Vertex_texture);
+  setVertexAttribPointers();
 
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cubeVertexesIndexesBufId);
 
   gl.drawElements(gl.TRIANGLES, cube.indexes.length, cube.indexType, 0);
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
+
+  // plane
+  gl.uniform1i(u_current_texture, 11);
+  gl.bindBuffer(gl.ARRAY_BUFFER, planeVertexesBufId);
+  setVertexAttribPointers();
+  gl.drawArrays(gl.TRIANGLES, 0, planeVertexes.length / 8);
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
 };
 
