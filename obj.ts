@@ -13,9 +13,7 @@ function parseObj(objRaw: string) {
     index: number;
   }
   /**
-   * key is something like 1/2/3 from "f" command
-   *
-   * Map is ordered!
+   * key is string like 1/2/3 from "f" command
    */
   const faceVertexes = new Map<string, FaceVertex>();
 
