@@ -434,30 +434,3 @@ const addEventListeners = () => {
     { passive: false }
   );
 };
-/*
-
-const u_Color_location = gl.getUniformLocation(program, "u_Color");
-const u_Transform_location = gl.getUniformLocation(program, "u_Transform");
-
-
-const transform = new Float32Array(16);
-transform.fill(0);
-transform[0] = 1;
-transform[5] = 1;
-transform[10] = 1;
-transform[15] = 1;
-
-gl.uniformMatrix4fv(u_Transform_location, false, transform);
-
-var pyramid_color = new Float32Array([0.5, 0.5, 0.0, 1.0]);
-gl.uniform4fv(u_Color_location, pyramid_color);
-
-//     // Bind the vertices Buffer Object to the 'a_Vertex' shader variable
-// TODO
-gl.vertexAttribPointer(a_Vertex_location, 3, gl.FLOAT, false, 0, 0);
-// TODO
-gl.enableVertexAttribArray(a_Vertex_location);
-
-// Draw all of the triangles
-gl.drawArrays(gl.TRIANGLES, 0, 12);
-*/
