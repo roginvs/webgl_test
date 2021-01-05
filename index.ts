@@ -387,9 +387,9 @@ const render = () => {
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
 };
 
-const tmpMatrix = mat4.create();
-
 const addEventListeners = () => {
+  const tmpMatrix = mat4.create();
+
   canvas.addEventListener(
     "mousemove",
     (e) => {
