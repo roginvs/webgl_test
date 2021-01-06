@@ -335,9 +335,8 @@ loadCubebox("cubebox.jpg").then((imagesData) => {
 //
 /// ============  rendering ================
 
-const cubeTransformMatrix = mat4.create();
-mat4.scale(cubeTransformMatrix, cubeTransformMatrix, [1, 1, 1]);
-//mat4.translate(cubeTransformMatrix, cubeTransformMatrix, [0, 0, -2]);
+const modelTransformMatrix = mat4.create();
+mat4.scale(modelTransformMatrix, modelTransformMatrix, [1, 1, 1]);
 
 const cameraViewMatrix = mat4.create();
 mat4.translate(cameraViewMatrix, cameraViewMatrix, [0, 0, -40]);
@@ -390,8 +389,8 @@ const render = () => {
   gl.uniformMatrix4fv(u_view_location, false, cameraViewMatrix);
   gl.uniformMatrix4fv(u_projection_location, false, projectionMatrix);
 
-  // cube
-  gl.uniformMatrix4fv(u_model_location, false, cubeTransformMatrix);
+  // model
+  gl.uniformMatrix4fv(u_model_location, false, modelTransformMatrix);
 
   gl.uniform1i(u_current_texture, MODEL_TEXTURE_ID);
 
@@ -437,7 +436,7 @@ const addEventListeners = () => {
 
       if (e.shiftKey) {
         // Rotate object
-        mat4.multiply(cubeTransformMatrix, tmpMatrix, cubeTransformMatrix);
+        mat4.multiply(modelTransformMatrix, tmpMatrix, modelTransformMatrix);
       } else {
         // Rotate camera
         mat4.multiply(cameraViewMatrix, cameraViewMatrix, tmpMatrix);
