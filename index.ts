@@ -209,8 +209,11 @@ if (!cubeboxTexture) {
 }
 */
 
+const MODEL_TEXTURE_ID = 10;
+const PLANE_TEXTURE_ID = 11;
+
 const load1 = loadImage("texture.png").then((imgData) => {
-  gl.activeTexture(gl.TEXTURE10);
+  gl.activeTexture(gl.TEXTURE0 + MODEL_TEXTURE_ID);
   gl.bindTexture(gl.TEXTURE_2D, modelTexture);
   gl.texImage2D(
     gl.TEXTURE_2D,
@@ -232,7 +235,7 @@ const load1 = loadImage("texture.png").then((imgData) => {
 });
 
 const load2 = loadImage("plane.png").then((imgData) => {
-  gl.activeTexture(gl.TEXTURE11);
+  gl.activeTexture(gl.TEXTURE0 + PLANE_TEXTURE_ID);
   gl.bindTexture(gl.TEXTURE_2D, planeTexture);
   gl.texImage2D(
     gl.TEXTURE_2D,
@@ -367,7 +370,7 @@ const render = () => {
   // cube
   gl.uniformMatrix4fv(u_model_location, false, cubeTransformMatrix);
 
-  gl.uniform1i(u_current_texture, 10);
+  gl.uniform1i(u_current_texture, MODEL_TEXTURE_ID);
 
   gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexesBufId);
 
@@ -380,7 +383,7 @@ const render = () => {
 
   // plane
   gl.uniformMatrix4fv(u_model_location, false, planeTransform);
-  gl.uniform1i(u_current_texture, 11);
+  gl.uniform1i(u_current_texture, PLANE_TEXTURE_ID);
   gl.bindBuffer(gl.ARRAY_BUFFER, planeVertexesBufId);
   setVertexAttribPointers();
   gl.drawArrays(gl.TRIANGLES, 0, planeVertexes.length / 8);
