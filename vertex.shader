@@ -29,7 +29,7 @@ void main() {
  
 
   //vec3 diffuse_light_location = vec3(-3.0, 3.0, 2.0);
-  vec3 diffuse_light_location = vec3(0.0, 0.0, 3.0);
+  vec3 diffuse_light_location = vec3(0.0, 20.0, 33.0);
   vec3 diffuse_light_vector = normalize(diffuse_light_location - world_pos.xyz);
   
   float diffuse_coefficient = max(0.0, dot(world_normal.xyz, diffuse_light_vector));
