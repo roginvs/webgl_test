@@ -55,11 +55,10 @@ export function parseObjFile(objRaw: string) {
       // smoothing, ignore
       continue;
     } else if (cmd === "f") {
-      if (args.length !== 3) {
-        // TODO: Multiple vertexes!
-        // throw new Error(`Expect 3 args in line '${line}'`);
+      if (args.length < 3) {
+        throw new Error(`Expect 3 or more args in line '${line}'`);
       }
-      // args is [ '2/1/1', '3/2/1', '4/3/1' ]
+
       const parseFaceVertex = (faceVertex: string) => {
         const existing = faceVertexes.get(faceVertex);
         if (existing) {
@@ -94,34 +93,37 @@ export function parseObjFile(objRaw: string) {
         };
       };
 
-      const v1 = parseFaceVertex(args[0]);
-      const v2 = parseFaceVertex(args[1]);
-      const v3 = parseFaceVertex(args[2]);
+      // args is [ '2/1/1', '3/2/1', '4/3/1' , ... ]
+      for (let i = 0; i < args.length - 2; i++) {
+        const v1 = parseFaceVertex(args[0]);
+        const v2 = parseFaceVertex(args[i + 1]);
+        const v3 = parseFaceVertex(args[i + 2]);
 
-      const packVertex = (vertexData: FaceVertex) => {
-        return [
-          vertexData.vertex[0],
-          vertexData.vertex[1],
-          vertexData.vertex[2],
-          vertexData.texture ? vertexData.texture[0] : 0,
-          vertexData.texture ? vertexData.texture[1] : 0,
-          vertexData.normal[0],
-          vertexData.normal[1],
-          vertexData.normal[2],
-        ];
-      };
-      // console.info(`Face indexes = ${v1.index} ${v2.index} ${v3.index}`);
-      for (const v of [v1, v2, v3]) {
-        if (!v.alreadyInTriagles) {
-          const packedData = packVertex(v);
-          // console.info(`  pushing idx=${v.index}`);
-          // console.info(`  data is ${packedData.join(" ")}`);
-          packedVertexes.push(...packedData);
+        const packVertex = (vertexData: FaceVertex) => {
+          return [
+            vertexData.vertex[0],
+            vertexData.vertex[1],
+            vertexData.vertex[2],
+            vertexData.texture ? vertexData.texture[0] : 0,
+            vertexData.texture ? vertexData.texture[1] : 0,
+            vertexData.normal[0],
+            vertexData.normal[1],
+            vertexData.normal[2],
+          ];
+        };
+        // console.info(`Face indexes = ${v1.index} ${v2.index} ${v3.index}`);
+        for (const v of [v1, v2, v3]) {
+          if (!v.alreadyInTriagles) {
+            const packedData = packVertex(v);
+            // console.info(`  pushing idx=${v.index}`);
+            // console.info(`  data is ${packedData.join(" ")}`);
+            packedVertexes.push(...packedData);
+          }
         }
+        indexes.push(v1.index);
+        indexes.push(v2.index);
+        indexes.push(v3.index);
       }
-      indexes.push(v1.index);
-      indexes.push(v2.index);
-      indexes.push(v3.index);
     }
   }
 
