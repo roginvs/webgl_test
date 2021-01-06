@@ -1,7 +1,7 @@
 import { readFileSync } from "fs";
 import { Vector, Vector2d } from "./mat4";
 
-function parseObj(objRaw: string) {
+export function parseObjFile(objRaw: string) {
   const vertexes: Vector[] = [];
   const textureCoords: Vector2d[] = [];
   const vertexNormales: Vector[] = [];
@@ -141,6 +141,3 @@ function parseObj(objRaw: string) {
     indexType: GL_UNSIGNED_SHORT,
   };
 }
-
-const objRaw = readFileSync("./cube/cube.obj", "utf-8");
-export const cube = parseObj(objRaw);

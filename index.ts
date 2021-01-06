@@ -2,8 +2,8 @@ import { assert } from "console";
 import { readFileSync } from "fs";
 import * as mat4 from "./mat4";
 import { loadCubebox, loadImage } from "./loadImage";
-import { cube } from "./obj";
 import { planeVertexes } from "./data";
+import { parseObjFile } from "./obj";
 
 document.getElementById("build_date")!.innerHTML = `Built at ${new Date(
   parseInt(process.env.BUILD_TIME || "") * 1000
@@ -154,21 +154,16 @@ gl.clearColor(0, 0, 0, 1);
 const FLOAT_SIZE = 4;
 //
 //
-// ==== providing cube
-const cubeVertexesBufId = gl.createBuffer();
-if (!cubeVertexesBufId) {
-  throw new Error("Failed to create cubeVertexesBuf");
+// ==== providing model
+const modelVertexesBufId = gl.createBuffer();
+if (!modelVertexesBufId) {
+  throw new Error("Failed to create buffer");
 }
-gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexesBufId);
-gl.bufferData(gl.ARRAY_BUFFER, cube.vertexes, gl.STATIC_DRAW);
-(window as any).cube = cube;
-const cubeVertexesIndexesBufId = gl.createBuffer();
-if (!cubeVertexesIndexesBufId) {
-  throw new Error("Failed to create cubeVertexesBuf");
+
+const modelVertexesIndexesBufId = gl.createBuffer();
+if (!modelVertexesIndexesBufId) {
+  throw new Error("Failed to create buffer");
 }
-gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cubeVertexesIndexesBufId);
-gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, cube.indexes, gl.STATIC_DRAW);
-gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null); // Unbind to ensure proper usage
 
 // == plane
 const planeVertexesBufId = gl.createBuffer();
@@ -212,7 +207,7 @@ if (!cubeboxTexture) {
 const MODEL_TEXTURE_ID = 10;
 const PLANE_TEXTURE_ID = 11;
 
-const load1 = loadImage("texture.png").then((imgData) => {
+const load1 = loadImage("model.png").then((imgData) => {
   gl.activeTexture(gl.TEXTURE0 + MODEL_TEXTURE_ID);
   gl.bindTexture(gl.TEXTURE_2D, modelTexture);
   gl.texImage2D(
@@ -255,6 +250,32 @@ const load2 = loadImage("plane.png").then((imgData) => {
 
   console.info("Plane texture loaded");
 });
+
+/**
+ This value will be known only when obj file is loaded
+ But render function is defined before
+ This is not very good - we can define render only when all assets are loaded. TODO this
+*/
+let modelVerticesLength = 0;
+
+const load3 = fetch("model.obj")
+  .then((response) => response.text())
+  .then((raw) => parseObjFile(raw))
+
+  .then((model) => {
+    modelVerticesLength = model.indexes.length;
+    if (model.indexType !== gl.UNSIGNED_SHORT) {
+      throw new Error(`Unsupported index type`);
+    }
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, modelVertexesBufId);
+    gl.bufferData(gl.ARRAY_BUFFER, model.vertexes, gl.STATIC_DRAW);
+    gl.bindBuffer(gl.ARRAY_BUFFER, null); // Unbind to ensure proper usage
+
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, modelVertexesIndexesBufId);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, model.indexes, gl.STATIC_DRAW);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null); // Unbind to ensure proper usage
+  });
 
 Promise.all([load1, load2]).then(() => {
   console.info("All loaded");
@@ -372,14 +393,15 @@ const render = () => {
 
   gl.uniform1i(u_current_texture, MODEL_TEXTURE_ID);
 
-  gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexesBufId);
+  gl.bindBuffer(gl.ARRAY_BUFFER, modelVertexesBufId);
 
   setVertexAttribPointers();
 
-  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cubeVertexesIndexesBufId);
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, modelVertexesIndexesBufId);
 
-  gl.drawElements(gl.TRIANGLES, cube.indexes.length, cube.indexType, 0);
+  gl.drawElements(gl.TRIANGLES, modelVerticesLength, gl.UNSIGNED_SHORT, 0);
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
+  gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
   // plane
   gl.uniformMatrix4fv(u_model_location, false, planeTransform);
