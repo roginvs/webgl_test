@@ -20,8 +20,6 @@ export function parseObjFile(objRaw: string) {
   const packedVertexes: number[] = [];
   const indexes: number[] = [];
 
-  let faceId = 0;
-
   for (const line of objRaw.split(/\n|\r/).filter((x) => x)) {
     if (line.startsWith("#")) {
       continue;
@@ -29,7 +27,6 @@ export function parseObjFile(objRaw: string) {
     const [cmd, ...args] = line.split(/ +/);
 
     const [arg1] = args;
-
     if (cmd === "mtllib") {
       // No support yet
       continue;
@@ -61,13 +58,6 @@ export function parseObjFile(objRaw: string) {
     } else if (cmd === "f") {
       if (args.length < 3) {
         throw new Error(`Expect 3 or more args in line '${line}'`);
-      }
-
-      faceId++;
-      if (faceId <= 79 && faceId >= 79) {
-        console.info(line);
-      } else {
-        continue;
       }
 
       const parseFaceVertex = (faceVertex: string) => {
