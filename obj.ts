@@ -106,7 +106,7 @@ export function parseObjFile(objRaw: string) {
             vertexData.vertex[1],
             vertexData.vertex[2],
             vertexData.texture ? vertexData.texture[0] : 0,
-            vertexData.texture ? vertexData.texture[1] : 0,
+            vertexData.texture ? 1 - vertexData.texture[1] : 0,
             vertexData.normal[0],
             vertexData.normal[1],
             vertexData.normal[2],
