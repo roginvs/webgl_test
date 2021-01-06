@@ -56,7 +56,8 @@ export function parseObjFile(objRaw: string) {
       continue;
     } else if (cmd === "f") {
       if (args.length !== 3) {
-        throw new Error("Expect 3 args");
+        // TODO: Multiple vertexes!
+        // throw new Error(`Expect 3 args in line '${line}'`);
       }
       // args is [ '2/1/1', '3/2/1', '4/3/1' ]
       const parseFaceVertex = (faceVertex: string) => {
