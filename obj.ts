@@ -42,7 +42,8 @@ export function parseObjFile(objRaw: string) {
       if (args.length !== 2) {
         throw new Error("Expect 2 args");
       }
-      textureCoords.push(args.map((arg) => parseFloat(arg)) as Vector2d);
+      const textureCoord = args.map((arg) => parseFloat(arg)) as Vector2d;
+      textureCoords.push(textureCoord);
     } else if (cmd === "vn") {
       if (args.length !== 3) {
         throw new Error("Expect 3 args");
