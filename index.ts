@@ -226,10 +226,12 @@ const load1 = loadImage("model.png").then((imgData) => {
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
 
+  // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+  // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
   console.info("Model texture loaded");
 });
 
-const load2 = loadImage("plane.png").then((imgData) => {
+const load2 = loadImage("plane.jpg").then((imgData) => {
   gl.activeTexture(gl.TEXTURE0 + PLANE_TEXTURE_ID);
   gl.bindTexture(gl.TEXTURE_2D, planeTexture);
   gl.texImage2D(
@@ -333,16 +335,15 @@ loadCubebox("cubebox.jpg").then((imagesData) => {
 //
 /// ============  rendering ================
 
-const cubeTransformMatrix = mat4.create();
-mat4.scale(cubeTransformMatrix, cubeTransformMatrix, [1, 1, 1]);
-//mat4.translate(cubeTransformMatrix, cubeTransformMatrix, [0, 0, -2]);
+const modelTransformMatrix = mat4.create();
+mat4.scale(modelTransformMatrix, modelTransformMatrix, [1, 1, 1]);
 
 const cameraViewMatrix = mat4.create();
-mat4.translate(cameraViewMatrix, cameraViewMatrix, [0, 0, -10]);
-mat4.rotate(cameraViewMatrix, cameraViewMatrix, Math.PI / 5, [-1, 1, 0]);
+mat4.translate(cameraViewMatrix, cameraViewMatrix, [0, 0, -60]);
+mat4.rotate(cameraViewMatrix, cameraViewMatrix, Math.PI / 5, [1, 1, 0]);
 
 const projectionMatrix = mat4.create();
-mat4.perspective(projectionMatrix, 45, 1, 0.1, 100);
+mat4.perspective(projectionMatrix, 45, 1, 0.1, 1000);
 
 // This matrix should be kept as identity because plane is not transforming
 const planeTransform = mat4.create();
@@ -388,8 +389,8 @@ const render = () => {
   gl.uniformMatrix4fv(u_view_location, false, cameraViewMatrix);
   gl.uniformMatrix4fv(u_projection_location, false, projectionMatrix);
 
-  // cube
-  gl.uniformMatrix4fv(u_model_location, false, cubeTransformMatrix);
+  // model
+  gl.uniformMatrix4fv(u_model_location, false, modelTransformMatrix);
 
   gl.uniform1i(u_current_texture, MODEL_TEXTURE_ID);
 
@@ -435,7 +436,7 @@ const addEventListeners = () => {
 
       if (e.shiftKey) {
         // Rotate object
-        mat4.multiply(cubeTransformMatrix, tmpMatrix, cubeTransformMatrix);
+        mat4.multiply(modelTransformMatrix, tmpMatrix, modelTransformMatrix);
       } else {
         // Rotate camera
         mat4.multiply(cameraViewMatrix, cameraViewMatrix, tmpMatrix);
@@ -458,4 +459,16 @@ const addEventListeners = () => {
     },
     { passive: false }
   );
+
+  /*
+  document.addEventListener("keyup", (e) => {
+    console.info(e.key);
+    const step = 10;
+    mat4.identity(tmpMatrix);
+    mat4.translate(tmpMatrix, tmpMatrix, [step, 0, 0]);
+    mat4.multiply(cameraViewMatrix, cameraViewMatrix, tmpMatrix);
+
+    render();
+  });
+  */
 };

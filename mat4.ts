@@ -8,13 +8,22 @@ with types annotations
 */
 
 /**
- * Nominal typed 4 dimentional matrix
+ * Nominal typed 4x4 matrix
  */
 export type Matrix4 = Float32Array & {
   readonly _nominal: "this is 4 dimentional matrix";
 };
 
+/**
+ * Nominal typed 3x3 matrix
+ */
+export type Matrix3 = Float32Array & {
+  readonly _nominal: "this is 3 dimentional matrix";
+};
+
 export type Vector = [number, number, number];
+
+export type Vector4 = [number, number, number, number];
 
 export type Vector2d = [number, number];
 
@@ -48,6 +57,18 @@ export function create(): Matrix4 {
   return out as Matrix4;
 }
 
+/**
+ * Creates a new identity mat4
+ *
+ * @returns {mat4} a new 4x4 matrix
+ */
+export function create3(): Matrix3 {
+  let out = new Float32Array(9);
+  out[0] = 1;
+  out[4] = 1;
+  out[8] = 1;
+  return out as Matrix3;
+}
 /**
  * Generates a perspective projection matrix with the given bounds.
  * Passing null/undefined/no value for far will generate infinite projection matrix.
@@ -385,5 +406,124 @@ export function rotate(out: Matrix4, a: Matrix4, rad: number, axis: Vector) {
     out[14] = a[14];
     out[15] = a[15];
   }
+  return out;
+}
+
+/**
+ * Returns the scaling factor component of a transformation
+ *  matrix. If a matrix is built with fromRotationTranslationScale
+ *  with a normalized Quaternion paramter, the returned vector will be
+ *  the same as the scaling vector
+ *  originally supplied.
+ * @param  {vec3} out Vector to receive scaling factor component
+ * @param  {ReadonlyMat4} mat Matrix to be decomposed (input)
+ * @return {vec3} out
+ */
+export function getScaling(out: Vector, mat: Matrix4) {
+  let m11 = mat[0];
+  let m12 = mat[1];
+  let m13 = mat[2];
+  let m21 = mat[4];
+  let m22 = mat[5];
+  let m23 = mat[6];
+  let m31 = mat[8];
+  let m32 = mat[9];
+  let m33 = mat[10];
+  out[0] = Math.hypot(m11, m12, m13);
+  out[1] = Math.hypot(m21, m22, m23);
+  out[2] = Math.hypot(m31, m32, m33);
+  return out;
+}
+
+/**
+ * Returns a quaternion representing the rotational component
+ *  of a transformation matrix. If a matrix is built with
+ *  fromRotationTranslation, the returned quaternion will be the
+ *  same as the quaternion originally supplied.
+ * @param {quat} out Quaternion to receive the rotation component
+ * @param {ReadonlyMat4} mat Matrix to be decomposed (input)
+ * @return {quat} out
+ */
+export function getRotation(out: Vector4, mat: Matrix4) {
+  let scaling: Vector = [0, 0, 0];
+  getScaling(scaling, mat);
+  let is1 = 1 / scaling[0];
+  let is2 = 1 / scaling[1];
+  let is3 = 1 / scaling[2];
+  let sm11 = mat[0] * is1;
+  let sm12 = mat[1] * is2;
+  let sm13 = mat[2] * is3;
+  let sm21 = mat[4] * is1;
+  let sm22 = mat[5] * is2;
+  let sm23 = mat[6] * is3;
+  let sm31 = mat[8] * is1;
+  let sm32 = mat[9] * is2;
+  let sm33 = mat[10] * is3;
+  let trace = sm11 + sm22 + sm33;
+  let S = 0;
+  if (trace > 0) {
+    S = Math.sqrt(trace + 1.0) * 2;
+    out[3] = 0.25 * S;
+    out[0] = (sm23 - sm32) / S;
+    out[1] = (sm31 - sm13) / S;
+    out[2] = (sm12 - sm21) / S;
+  } else if (sm11 > sm22 && sm11 > sm33) {
+    S = Math.sqrt(1.0 + sm11 - sm22 - sm33) * 2;
+    out[3] = (sm23 - sm32) / S;
+    out[0] = 0.25 * S;
+    out[1] = (sm12 + sm21) / S;
+    out[2] = (sm31 + sm13) / S;
+  } else if (sm22 > sm33) {
+    S = Math.sqrt(1.0 + sm22 - sm11 - sm33) * 2;
+    out[3] = (sm31 - sm13) / S;
+    out[0] = (sm12 + sm21) / S;
+    out[1] = 0.25 * S;
+    out[2] = (sm23 + sm32) / S;
+  } else {
+    S = Math.sqrt(1.0 + sm33 - sm11 - sm22) * 2;
+    out[3] = (sm12 - sm21) / S;
+    out[0] = (sm31 + sm13) / S;
+    out[1] = (sm23 + sm32) / S;
+    out[2] = 0.25 * S;
+  }
+  return out;
+}
+
+/**
+ * Calculates a 3x3 matrix from the given quaternion
+ *
+ * @param {mat3} out mat3 receiving operation result
+ * @param {ReadonlyQuat} q Quaternion to create matrix from
+ *
+ * @returns {mat4} out
+ */
+export function fromQuat(out: Matrix3, q: Vector4) {
+  let x = q[0],
+    y = q[1],
+    z = q[2],
+    w = q[3];
+  let x2 = x + x;
+  let y2 = y + y;
+  let z2 = z + z;
+  let xx = x * x2;
+  let yx = y * x2;
+  let yy = y * y2;
+  let zx = z * x2;
+  let zy = z * y2;
+  let zz = z * z2;
+  let wx = w * x2;
+  let wy = w * y2;
+  let wz = w * z2;
+  out[0] = 1 - yy - zz;
+  out[1] = yx + wz;
+  out[2] = zx - wy;
+  //out[3] = 0;
+  out[3] = yx - wz;
+  out[4] = 1 - xx - zz;
+  out[5] = zy + wx;
+  //out[7] = 0;
+  out[6] = zx + wy;
+  out[7] = zy - wx;
+  out[8] = 1 - xx - yy;
   return out;
 }
