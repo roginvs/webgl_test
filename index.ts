@@ -460,15 +460,24 @@ const addEventListeners = () => {
     { passive: false }
   );
 
-  /*
   document.addEventListener("keyup", (e) => {
     console.info(e.key);
     const step = 10;
+
+    const vec: mat4.Vector =
+      e.key === "w"
+        ? [step, 0, 0]
+        : e.key === "s"
+        ? [-step, 0, 0]
+        : e.key === "a"
+        ? [0, 0, step]
+        : e.key === "d"
+        ? [0, 0, -step]
+        : [0, 0, 0];
     mat4.identity(tmpMatrix);
-    mat4.translate(tmpMatrix, tmpMatrix, [step, 0, 0]);
+    mat4.translate(tmpMatrix, tmpMatrix, vec);
     mat4.multiply(cameraViewMatrix, cameraViewMatrix, tmpMatrix);
 
     render();
   });
-  */
 };
