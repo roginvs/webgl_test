@@ -231,7 +231,7 @@ const load1 = loadImage("model.png").then((imgData) => {
   console.info("Model texture loaded");
 });
 
-const load2 = loadImage("plane.png").then((imgData) => {
+const load2 = loadImage("plane.jpg").then((imgData) => {
   gl.activeTexture(gl.TEXTURE0 + PLANE_TEXTURE_ID);
   gl.bindTexture(gl.TEXTURE_2D, planeTexture);
   gl.texImage2D(
