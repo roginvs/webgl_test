@@ -7,11 +7,18 @@
         height: 500px;
         */
       }
+      .info {
+        font-family: monospace;
+      }
     </style>
     <div id="main">
       <canvas width="800px" height="600px" id="main_canvas"></canvas>
     </div>
-    <div id="build_date"></div>
+    <div id="build_date" class="info"></div>
+    <div class="info">
+      Click+mousemove = rotate camera; shift+click+mousemove = rotate model;
+      mousewheel = move camera
+    </div>
     <script defer src="./index.ts"></script>
   </body>
 </html>
