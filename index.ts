@@ -5,9 +5,15 @@ import { loadCubebox, loadImage } from "./loadImage";
 import { planeVertexes } from "./data";
 import { parseObjFile } from "./obj";
 
-document.getElementById("build_date")!.innerHTML = `Built at ${new Date(
-  parseInt(process.env.BUILD_TIME || "") * 1000
-).toLocaleString()}`;
+const statusDiv = document.getElementById("build_date") as HTMLDivElement;
+
+function updateStatus(s: string) {
+  statusDiv.innerHTML =
+    `Built at ${new Date(
+      parseInt(process.env.BUILD_TIME || "") * 1000
+    ).toLocaleString()}` + (s ? ` (${s})` : "");
+}
+updateStatus("Starting");
 
 const canvas = document.getElementById("main_canvas") as HTMLCanvasElement;
 
@@ -207,52 +213,6 @@ if (!cubeboxTexture) {
 const MODEL_TEXTURE_ID = 10;
 const PLANE_TEXTURE_ID = 11;
 
-const load1 = loadImage("model.png").then((imgData) => {
-  gl.activeTexture(gl.TEXTURE0 + MODEL_TEXTURE_ID);
-  gl.bindTexture(gl.TEXTURE_2D, modelTexture);
-  gl.texImage2D(
-    gl.TEXTURE_2D,
-    // mip level
-    0,
-    gl.RGBA,
-    imgData.width,
-    imgData.height,
-    0,
-    gl.RGBA,
-    gl.UNSIGNED_BYTE,
-    imgData.data
-  );
-
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-
-  // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
-  // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-  console.info("Model texture loaded");
-});
-
-const load2 = loadImage("plane.jpg").then((imgData) => {
-  gl.activeTexture(gl.TEXTURE0 + PLANE_TEXTURE_ID);
-  gl.bindTexture(gl.TEXTURE_2D, planeTexture);
-  gl.texImage2D(
-    gl.TEXTURE_2D,
-    // mip level
-    0,
-    gl.RGBA,
-    imgData.width,
-    imgData.height,
-    0,
-    gl.RGBA,
-    gl.UNSIGNED_BYTE,
-    imgData.data
-  );
-
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-
-  console.info("Plane texture loaded");
-});
-
 /**
  This value will be known only when obj file is loaded
  But render function is defined before
@@ -260,30 +220,83 @@ const load2 = loadImage("plane.jpg").then((imgData) => {
 */
 let modelVerticesLength = 0;
 
-const load3 = fetch("model.obj")
-  .then((response) => response.text())
-  .then((raw) => parseObjFile(raw))
+const start = async () => {
+  updateStatus("Loading model.png");
+  await loadImage("model.png").then((imgData) => {
+    gl.activeTexture(gl.TEXTURE0 + MODEL_TEXTURE_ID);
+    gl.bindTexture(gl.TEXTURE_2D, modelTexture);
+    gl.texImage2D(
+      gl.TEXTURE_2D,
+      // mip level
+      0,
+      gl.RGBA,
+      imgData.width,
+      imgData.height,
+      0,
+      gl.RGBA,
+      gl.UNSIGNED_BYTE,
+      imgData.data
+    );
 
-  .then((model) => {
-    modelVerticesLength = model.indexes.length;
-    if (model.indexType !== gl.UNSIGNED_SHORT) {
-      throw new Error(`Unsupported index type`);
-    }
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, modelVertexesBufId);
-    gl.bufferData(gl.ARRAY_BUFFER, model.vertexes, gl.STATIC_DRAW);
-    gl.bindBuffer(gl.ARRAY_BUFFER, null); // Unbind to ensure proper usage
-
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, modelVertexesIndexesBufId);
-    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, model.indexes, gl.STATIC_DRAW);
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null); // Unbind to ensure proper usage
+    // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+    // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    console.info("Model texture loaded");
   });
 
-Promise.all([load1, load2]).then(() => {
+  updateStatus("Loading plane.jpg");
+  await loadImage("plane.jpg").then((imgData) => {
+    gl.activeTexture(gl.TEXTURE0 + PLANE_TEXTURE_ID);
+    gl.bindTexture(gl.TEXTURE_2D, planeTexture);
+    gl.texImage2D(
+      gl.TEXTURE_2D,
+      // mip level
+      0,
+      gl.RGBA,
+      imgData.width,
+      imgData.height,
+      0,
+      gl.RGBA,
+      gl.UNSIGNED_BYTE,
+      imgData.data
+    );
+
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+
+    console.info("Plane texture loaded");
+  });
+
+  updateStatus("Loading model.obj");
+  await fetch("model.obj")
+    .then((response) => response.text())
+    .then((raw) => parseObjFile(raw))
+
+    .then((model) => {
+      modelVerticesLength = model.indexes.length;
+      if (model.indexType !== gl.UNSIGNED_SHORT) {
+        throw new Error(`Unsupported index type`);
+      }
+
+      gl.bindBuffer(gl.ARRAY_BUFFER, modelVertexesBufId);
+      gl.bufferData(gl.ARRAY_BUFFER, model.vertexes, gl.STATIC_DRAW);
+      gl.bindBuffer(gl.ARRAY_BUFFER, null); // Unbind to ensure proper usage
+
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, modelVertexesIndexesBufId);
+      gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, model.indexes, gl.STATIC_DRAW);
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null); // Unbind to ensure proper usage
+    });
+
+  updateStatus("Almost ready");
   console.info("All loaded");
   render();
   addEventListeners();
-});
+  updateStatus("");
+};
+
+start();
 
 /*
 loadCubebox("cubebox.jpg").then((imagesData) => {
