@@ -459,4 +459,16 @@ const addEventListeners = () => {
     },
     { passive: false }
   );
+
+  /*
+  document.addEventListener("keyup", (e) => {
+    console.info(e.key);
+    const step = 10;
+    mat4.identity(tmpMatrix);
+    mat4.translate(tmpMatrix, tmpMatrix, [step, 0, 0]);
+    mat4.multiply(cameraViewMatrix, cameraViewMatrix, tmpMatrix);
+
+    render();
+  });
+  */
 };
