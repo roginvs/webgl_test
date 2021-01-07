@@ -231,7 +231,19 @@ const load1 = loadImage("model.png").then((imgData) => {
   console.info("Model texture loaded");
 });
 
-const load2 = loadImage("plane.png").then((imgData) => {
+//const load2 = loadImage("plane.png").then((imgData) => {
+const load2 = Promise.resolve().then(() => {
+  const imgData = {
+    width: 2,
+    height: 2,
+    data: new Uint8Array(
+      `0 0 0 255   255 0 0 255   0 255 0 255    0 0 255 255`
+        .split(/ +/)
+        .map((x) => parseInt(x))
+    ),
+  };
+  console.info(imgData);
+
   gl.activeTexture(gl.TEXTURE0 + PLANE_TEXTURE_ID);
   gl.bindTexture(gl.TEXTURE_2D, planeTexture);
   gl.texImage2D(
