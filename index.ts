@@ -343,7 +343,7 @@ mat4.translate(cameraViewMatrix, cameraViewMatrix, [0, 0, -40]);
 mat4.rotate(cameraViewMatrix, cameraViewMatrix, Math.PI / 5, [1, 1, 0]);
 
 const projectionMatrix = mat4.create();
-mat4.perspective(projectionMatrix, 45, 1, 0.1, 100);
+mat4.perspective(projectionMatrix, 45, 1, 0.1, 1000);
 
 // This matrix should be kept as identity because plane is not transforming
 const planeTransform = mat4.create();
