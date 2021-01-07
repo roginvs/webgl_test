@@ -339,7 +339,7 @@ const modelTransformMatrix = mat4.create();
 mat4.scale(modelTransformMatrix, modelTransformMatrix, [1, 1, 1]);
 
 const cameraViewMatrix = mat4.create();
-mat4.translate(cameraViewMatrix, cameraViewMatrix, [0, 0, -40]);
+mat4.translate(cameraViewMatrix, cameraViewMatrix, [0, 0, -60]);
 mat4.rotate(cameraViewMatrix, cameraViewMatrix, Math.PI / 5, [1, 1, 0]);
 
 const projectionMatrix = mat4.create();
