@@ -3,6 +3,7 @@
 precision mediump float;
 
 uniform   mat4 u_model;
+uniform   mat3 u_model_normal;
 uniform   mat4 u_view;
 uniform   mat4 u_projection;
 // uniform   vec4 u_Color;
@@ -26,7 +27,7 @@ void main() {
   // TODO: Use separate matrix for normals which contains only rotations
   // Which is possible to get from model matrix with some math
   // Provide this 3x3 matrix as uniform
-  vec3 world_normal = normalize( (u_model * vec4(a_Vertex_normal, 1.0)).xyz);
+  vec3 world_normal = normalize( u_model_normal * a_Vertex_normal);
   v_normal = world_normal;
 
   v_position = world_pos.xyz;

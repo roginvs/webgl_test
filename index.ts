@@ -141,6 +141,10 @@ const a_Vertex_location = gl.getAttribLocation(programModel, "a_Vertex_loc");
 const a_Vertex_normal = gl.getAttribLocation(programModel, "a_Vertex_normal");
 const a_Vertex_texture = gl.getAttribLocation(programModel, "a_Vertex_texture");
 const u_model_location = gl.getUniformLocation(programModel, "u_model");
+const u_model_normal_location = gl.getUniformLocation(
+  programModel,
+  "u_model_normal"
+);
 const u_view_location = gl.getUniformLocation(programModel, "u_view");
 const u_projection_location = gl.getUniformLocation(
   programModel,
@@ -355,6 +359,7 @@ loadCubebox("cubebox.jpg").then((imagesData) => {
 /// ============  rendering ================
 
 const modelTransformMatrix = mat4.create();
+const modelNormalTransformMatrix = mat4.create3();
 mat4.scale(modelTransformMatrix, modelTransformMatrix, [1, 1, 1]);
 
 const cameraViewMatrix = mat4.create();
@@ -366,6 +371,7 @@ mat4.perspective(projectionMatrix, 45, 1, 0.1, 1000);
 
 // This matrix should be kept as identity because plane is not transforming
 const planeTransform = mat4.create();
+const planeNormalTransform = mat4.create3();
 
 const render = () => {
   console.info("Render");
@@ -410,6 +416,14 @@ const render = () => {
 
   // model
   gl.uniformMatrix4fv(u_model_location, false, modelTransformMatrix);
+  mat4.fromMat4(modelNormalTransformMatrix, modelTransformMatrix);
+  mat4.invert3(modelNormalTransformMatrix, modelNormalTransformMatrix);
+  mat4.transpose3(modelNormalTransformMatrix, modelNormalTransformMatrix);
+  gl.uniformMatrix3fv(
+    u_model_normal_location,
+    false,
+    modelNormalTransformMatrix
+  );
 
   gl.uniform1i(u_current_texture, MODEL_TEXTURE_ID);
 
@@ -425,6 +439,8 @@ const render = () => {
 
   // plane
   gl.uniformMatrix4fv(u_model_location, false, planeTransform);
+  gl.uniformMatrix3fv(u_model_normal_location, false, planeNormalTransform);
+
   gl.uniform1i(u_current_texture, PLANE_TEXTURE_ID);
   gl.bindBuffer(gl.ARRAY_BUFFER, planeVertexesBufId);
   setVertexAttribPointers();
