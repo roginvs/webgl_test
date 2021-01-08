@@ -10,15 +10,18 @@
       .info {
         font-family: monospace;
       }
+      #build_date {
+        color: gray;
+      }
     </style>
     <div id="main">
       <canvas width="800px" height="600px" id="main_canvas"></canvas>
     </div>
+
+    <div id="status" class="info">Loading js code...</div>
+
     <div id="build_date" class="info"></div>
-    <div class="info">
-      Click+mousemove = rotate camera; shift+click+mousemove = rotate model;
-      mousewheel = move camera, wasd = move
-    </div>
+
     <script defer src="./index.ts"></script>
   </body>
 </html>

@@ -5,13 +5,14 @@ import { loadCubebox, loadImage } from "./loadImage";
 import { planeVertexes } from "./data";
 import { parseObjFile } from "./obj";
 
-const statusDiv = document.getElementById("build_date") as HTMLDivElement;
+const buildDateDiv = document.getElementById("build_date") as HTMLDivElement;
+buildDateDiv.innerHTML = `Built at ${new Date(
+  parseInt(process.env.BUILD_TIME || "") * 1000
+).toLocaleString()}`;
 
+const statusDiv = document.getElementById("status") as HTMLDivElement;
 function updateStatus(s: string) {
-  statusDiv.innerHTML =
-    `Built at ${new Date(
-      parseInt(process.env.BUILD_TIME || "") * 1000
-    ).toLocaleString()}` + (s ? ` (${s})` : "");
+  statusDiv.innerHTML = s;
 }
 updateStatus("Starting");
 
@@ -293,10 +294,15 @@ const start = async () => {
   console.info("All loaded");
   render();
   addEventListeners();
-  updateStatus("");
+
+  updateStatus(`
+     Click+mousemove = rotate camera; 
+     shift+click+mousemove = rotate model;
+    mousewheel = move camera, wasd = move
+  `);
 };
 
-start();
+start().catch((e: Error) => updateStatus(`Error: ${e.name} ${e.message}`));
 
 /*
 loadCubebox("cubebox.jpg").then((imagesData) => {
