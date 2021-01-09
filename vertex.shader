@@ -13,7 +13,6 @@ attribute vec3 a_Vertex_loc;
 attribute vec3 a_Vertex_normal;
 attribute vec2 a_Vertex_texture;
 
-varying vec3 v_light_color;
 varying vec3 v_position;
 varying vec3 v_normal;
 varying vec2 v_texture_coordinate;
