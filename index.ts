@@ -156,6 +156,11 @@ const u_current_texture = gl.getUniformLocation(
   "u_current_texture"
 );
 
+const u_camera_pos_in_world_coords = gl.getUniformLocation(
+  programModel,
+  "u_camera_pos_in_world_coords"
+);
+
 gl.useProgram(programModel);
 
 checkErr();
@@ -373,8 +378,18 @@ mat4.perspective(projectionMatrix, 45, 1, 0.1, 1000);
 const planeTransform = mat4.create();
 const planeNormalTransform = mat4.create3();
 
+const tmpMatrix = mat4.create();
+
 const render = () => {
   console.info("Render");
+
+  mat4.invert(tmpMatrix, cameraViewMatrix);
+  gl.uniform3f(
+    u_camera_pos_in_world_coords,
+    tmpMatrix[12],
+    tmpMatrix[13],
+    tmpMatrix[14]
+  );
 
   const setVertexAttribPointers = () => {
     // Location
@@ -449,8 +464,6 @@ const render = () => {
 };
 
 const addEventListeners = () => {
-  const tmpMatrix = mat4.create();
-
   canvas.addEventListener(
     "mousemove",
     (e) => {
