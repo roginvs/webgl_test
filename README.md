@@ -6,6 +6,24 @@ Just a small playground for webgl
 
 <https://roginvs.github.io/webgl_test/>
 
+## Running locally
+
+### 1. Install nodejs
+
+https://nodejs.org/en/
+
+### 2. Install packages
+
+```sh
+npm install
+```
+
+### 3. Run local server
+
+```sh
+npm start
+```
+
 ## Links
 
 https://www.khronos.org/registry/webgl/specs/latest/1.0/#5.2

@@ -32,4 +32,6 @@ void main() {
   v_position = world_pos.xyz;
 
   v_texture_coordinate = a_Vertex_texture;
+
+  
 }
