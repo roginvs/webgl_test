@@ -22,16 +22,11 @@ void main() {
   
   // Transform the location of the vertex
   gl_Position = u_projection * u_view * world_pos;
-
-  // TODO: Use separate matrix for normals which contains only rotations
-  // Which is possible to get from model matrix with some math
-  // Provide this 3x3 matrix as uniform
-  vec3 world_normal = normalize( u_model_normal * a_Vertex_normal);
-  v_normal = world_normal;
-
+ 
   v_position = world_pos.xyz;
 
-  v_texture_coordinate = a_Vertex_texture;
-
+  // Transform normals into world coordinates using separate matrix
+  v_normal = normalize( u_model_normal * a_Vertex_normal);
   
+  v_texture_coordinate = a_Vertex_texture;
 }
