@@ -383,6 +383,8 @@ const tmpMatrix = mat4.create();
 const render = () => {
   console.info("Render");
 
+  // Same uniforms for model and plane
+  gl.uniformMatrix4fv(u_view_location, false, cameraViewMatrix);
   mat4.invert(tmpMatrix, cameraViewMatrix);
   gl.uniform3f(
     u_camera_pos_in_world_coords,
@@ -390,7 +392,9 @@ const render = () => {
     tmpMatrix[13],
     tmpMatrix[14]
   );
+  gl.uniformMatrix4fv(u_projection_location, false, projectionMatrix);
 
+  // For model and plane buffers we have to set pointers
   const setVertexAttribPointers = () => {
     // Location
     gl.vertexAttribPointer(
@@ -425,9 +429,6 @@ const render = () => {
     );
     gl.enableVertexAttribArray(a_Vertex_texture);
   };
-
-  gl.uniformMatrix4fv(u_view_location, false, cameraViewMatrix);
-  gl.uniformMatrix4fv(u_projection_location, false, projectionMatrix);
 
   // model
   gl.uniformMatrix4fv(u_model_location, false, modelTransformMatrix);
