@@ -1,4 +1,4 @@
-async function loadImageToCanvas<T>(
+async function loadImageToCanvasContext<T>(
   imgSrc: string,
   callback: (
     context: CanvasRenderingContext2D,
@@ -6,7 +6,7 @@ async function loadImageToCanvas<T>(
     height: number
   ) => T
 ): Promise<T> {
-  // Block magic to bypass CORS issues
+  // Blob magic to bypass CORS issues
 
   const blob = await fetch(imgSrc).then((x) => x.blob());
 
@@ -37,7 +37,7 @@ async function loadImageToCanvas<T>(
 export async function loadImage(
   imgSrc = "https://spacerangers.gitlab.io/favicon.png"
 ) {
-  const imageData = await loadImageToCanvas(
+  const imageData = await loadImageToCanvasContext(
     imgSrc,
     (context, width, height) => {
       return context.getImageData(0, 0, width, height);
@@ -53,23 +53,24 @@ export async function loadImage(
  */
 
 export async function loadCubebox(imgSrc = "cubebox.jpg") {
-  // Block magic to bypass CORS issues
+  const data = await loadImageToCanvasContext(
+    imgSrc,
+    (context, width, height) => {
+      const size = width / 4;
+      if (height / 3 !== size) {
+        throw new Error("Wrong size");
+      }
 
-  const data = await loadImageToCanvas(imgSrc, (context, width, height) => {
-    const size = width / 4;
-    if (height / 3 !== size) {
-      throw new Error("Wrong size");
+      return [
+        [1, 0],
+        [0, 1],
+        [1, 1],
+        [2, 1],
+        [3, 1],
+        [1, 2],
+      ].map(([i, j]) => context.getImageData(i * size, j * size, size, size));
     }
-
-    return [
-      [1, 0],
-      [0, 1],
-      [1, 1],
-      [2, 1],
-      [3, 1],
-      [1, 2],
-    ].map(([i, j]) => context.getImageData(i * size, j * size, size, size));
-  });
+  );
 
   return data;
 }
