@@ -280,7 +280,7 @@ const start = async () => {
   });
 
   updateStatus("Loading model.obj");
-  await fetch("model.obj")
+  await fetch("model.obj") // Change it here into "cylinders.obj" to check how smoothing works (same amount of triangles but normals differs)
     .then((response) => response.text())
     .then((raw) => parseObjFile(raw))
 
