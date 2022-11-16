@@ -280,7 +280,7 @@ const start = async () => {
   });
 
   updateStatus("Loading model.obj");
-  await fetch("cylinders.obj")
+  await fetch("model.obj")
     .then((response) => response.text())
     .then((raw) => parseObjFile(raw))
 
